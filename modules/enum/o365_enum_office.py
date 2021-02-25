@@ -131,8 +131,8 @@ class ASModule(object):
             logging.debug(e)
             pass
 
-    def _send_request(self, request, url, auth=None, data=None,
-                      json_data=None, headers=HTTP_HEADERS):
+    def _send_request(self, request, url, auth=None, data=None, json_data=None,
+                      headers=HTTP_HEADERS, allow_redirects=False):
         ''' Template for HTTP Requests '''
         return request(url,
                        auth=auth,
@@ -141,7 +141,7 @@ class ASModule(object):
                        headers=headers,
                        proxies=self.proxies,
                        timeout=self.args.timeout,
-                       allow_redirects=False,
+                       allow_redirects=allow_redirects,
                        verify=False)
 
     # Via: https://github.com/0xZDH/o365spray/blob/master/core/handlers/enumerator.py#L202
@@ -153,7 +153,8 @@ class ASModule(object):
     def _pre_office(self):
         # Request the base domain to collect the `client_id`
         response = self._send_request(requests.get,
-                                      "https://www.office.com")
+                                     "https://www.office.com",
+                                      allow_redirects=True)
 
         client_id = re.findall(b'"appId":"([^"]*)"', response.content)
 
@@ -167,7 +168,7 @@ class ASModule(object):
         hpgact = re.findall(b'hpgact":([0-9]+),', response.content)
         hpgrequestid = response.headers['x-ms-request-id']
 
-        self.office_headers = Config.headers  # Grab external headers from config.py
+        self.office_headers = HTTP_HEADERS
 
         # Update headers
         self.office_headers['Referer']           = response.url

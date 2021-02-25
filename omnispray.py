@@ -241,7 +241,7 @@ if __name__ == "__main__":
 
     # If the module exists, attempt to import
     try:
-        ASModule = __import__(f"modules.{args.type}.{args.module}", fromlist=['ASModule'])
+        module_import = __import__(f"modules.{args.type}.{args.module}", fromlist=['ASModule'])
     except ModuleNotFoundError:
         logging.error(f"Module, modules.{args.type}.{args.module}, failed to import 'ASModule'.")
         sys.exit(1)
@@ -268,7 +268,7 @@ if __name__ == "__main__":
     # Build the module parameters and initialize the module class
     kwargs = { 'loop': loop, 'args': args, 'log_dir': LOG_DIR,
                'out_dir': OUT_DIR }
-    module = ASModule(**kwargs)
+    module = module_import.ASModule(**kwargs)
 
     # Since all modules will require at least a set of user(s),
     # perform item transformations to a uniform data type: List
