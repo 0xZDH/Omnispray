@@ -18,7 +18,7 @@ This tool aims to replace tools such as o365spray and provide a modular framewor
 | -us, --users | Multiple users/emails to process. (--users uname1 uname2 uname3 ...)                                         |
 | -uf, --userfile  | File containing multiple users/emails to process.                                                        |
 | -p, --password   | Single password to process.                                                                              |
-| -ps, --passwords | Multiple passwords to process. (--users uname1 uname2 uname3 ...)                                        |
+| -ps, --passwords | Multiple passwords to process. (--passwords password1 password2 password3 ...)                           |
 | -pf, --passwordfile | File containing multiple password to process.                                                         |
 | -c, --count   | Number of password attempts to run before resetting lockout timer. Default: 1                               |
 | -l, --lockout | Lockout policy reset time (in minutes). Default: 15 minutes                                                 |
