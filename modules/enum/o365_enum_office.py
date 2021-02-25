@@ -154,6 +154,8 @@ class ASModule(object):
               against office.com
         This method only needs to be run once at initialization of this module class '''
     def _pre_office(self):
+        logging.info("Generating prerequisite data via office.com...")
+
         # Request the base domain to collect the `client_id`
         response = self._send_request(requests.get,
                                      "https://www.office.com",
