@@ -59,6 +59,13 @@ if __name__ == "__main__":
              "the module type based on the module name."
     )
 
+    # Target URL for modules that don't use a standard URL
+    parser.add_argument(
+        "--url",
+        type=str,
+        help="Target URL."
+    )
+
     # Handle user/users/user file
     user_group.add_argument(
         "-u",
