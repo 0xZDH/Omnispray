@@ -30,7 +30,9 @@ This tool aims to replace tools such as o365spray and provide a modular framewor
 
 ## Pre-built Modules
 
-Currently, the included modules are ported from [o365spray](https://github.com/0xZDH/o365spray) for Microsoft O365 enumeration and password spraying.
+Currently, the included modules are ported from [o365spray](https://github.com/0xZDH/o365spray) for Microsoft O365 enumeration and password spraying. Default modules in o365spray:
+* Enumeration: Office -> modules/enum/o365_enum_office.py
+* Spraying: Activesync -> modules/spray/o365_spray_activesync.py
 
 ## Custom Modules
 
