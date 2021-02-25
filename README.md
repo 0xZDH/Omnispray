@@ -6,7 +6,7 @@ This tool aims to replace tools such as o365spray and provide a modular framewor
 
 ## Usage
 
-> Omnispray | Modular Enumeration and Password Spraying Suite -- v0.0.1
+> Omnispray | Modular Enumeration and Password Spraying Suite -- v0.1
 
 | Flag         | Description                                                                                                  |
 |--------------|--------------------------------------------------------------------------------------------------------------|
