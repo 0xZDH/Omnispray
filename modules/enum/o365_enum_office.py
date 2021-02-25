@@ -113,18 +113,18 @@ class ASModule(object):
                 # https://warroom.rsmus.com/enumerating-emails-via-office-com/
                 if int(r_body['IfExistsResult']) in [0, 6]:
                     self.successful_results.append(user)
-                    logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}")
+                    logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
 
                 elif int(body['IfExistsResult']) == 5:
                     self.successful_results.append(user)
-                    logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}")
+                    logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
                     logging.debug(f"{user}: Different Identity Provider")
 
                 else:
-                    print(f"{text_colors.red}[ - ]{text_colors.reset} {email}{gen_space(user)}", end='\r')
+                    print(f"{text_colors.red}[ - ]{text_colors.reset} {user}{gen_space(user)}", end='\r')
 
             else:
-                print(f"{text_colors.red}[ - ]{text_colors.reset} {email}{gen_space(user)}", end='\r')
+                print(f"{text_colors.red}[ - ]{text_colors.reset} {user}{gen_space(user)}", end='\r')
 
             # End template module code block logic.
             # --------------------------------------------------------

@@ -101,7 +101,7 @@ class ASModule(object):
             # Keep track of tested names in case we ctrl-c
             self.tested_file.write(f"{user}:{password}")
 
-            auth     = HTTPBasicAuth(email, password)
+            auth     = HTTPBasicAuth(user, password)
             url      = "https://outlook.office365.com/Microsoft-Server-ActiveSync"
             response = self._send_request(requests.options,
                                           url,
@@ -116,11 +116,11 @@ class ASModule(object):
             #       attempt
             if status == 200:
                 self.successful_results.append(f"{user}:{password}")
-                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}:{password}")
+                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}:{password}")
                 self.users.remove(user)
 
             else:
-                print(f"{text_colors.red}[ - ]{text_colors.reset} {email}:{password}{gen_space(user)}", end='\r')
+                print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{gen_space(user)}", end='\r')
 
             # End template module code block logic.
             # --------------------------------------------------------

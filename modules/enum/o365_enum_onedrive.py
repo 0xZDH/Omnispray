@@ -109,13 +109,13 @@ class ASModule(object):
             # instead of 401/403 on valid accounts
             if r_status in [302, 401, 403]:
                 self.successful_results.append(user)
-                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}")
+                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
 
             elif r_status == 404:
-                print(f"{text_colors.red}[ - ]{text_colors.reset} {email}{gen_space(user)}", end='\r')
+                print(f"{text_colors.red}[ - ]{text_colors.reset} {user}{gen_space(user)}", end='\r')
 
             else:
-                print(f"{text_colors.yellow}[ - ]{text_colors.reset} {email}{gen_space(user)}", end='\r')
+                print(f"{text_colors.yellow}[ - ]{text_colors.reset} {user}{gen_space(user)}", end='\r')
 
             # End template module code block logic.
             # --------------------------------------------------------

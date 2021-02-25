@@ -112,11 +112,11 @@ class ASModule(object):
 
             if r_status == 302:
                 self.successful_results.append(f"{user}:{password}")
-                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}:{password}")
+                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}:{password}")
                 self.users.remove(user)
 
             else:
-                print(f"{text_colors.red}[ - ]{text_colors.reset} {email}:{password}{gen_space(user)}", end='\r')
+                print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{gen_space(user)}", end='\r')
 
             # End template module code block logic.
             # --------------------------------------------------------

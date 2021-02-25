@@ -108,17 +108,17 @@ class ASModule(object):
             # Validate HTTP response status
             if r_status == 200:
                 self.successful_results.append(user)
-                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}")
+                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
 
             # Note: After the new MS updates, it appears that invalid users return a 403 Forbidden while valid users
             #       appear to respond with 401 Unauthorized with a WWW-Authenticate response header that indicates
             #       Basic auth negotiation was started
             elif r_status == 401 and "WWW-Authenticate" in r_headers.keys():
                 self.successful_results.append(user)
-                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}")
+                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
 
             else:
-                print(f"{text_colors.red}[ - ]{text_colors.reset} {email}{gen_space(user)}", end='\r')
+                print(f"{text_colors.red}[ - ]{text_colors.reset} {user}{gen_space(user)}", end='\r')
 
             # End template module code block logic.
             # --------------------------------------------------------

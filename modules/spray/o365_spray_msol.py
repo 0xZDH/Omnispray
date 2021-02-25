@@ -131,7 +131,7 @@ class ASModule(object):
 
             if r_status == 200:
                 self.successful_results.append(f"{user}:{password}")
-                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}:{password}")
+                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}:{password}")
                 self.users.remove(user)
 
             else:
@@ -148,13 +148,13 @@ class ASModule(object):
                         err     = AADSTS_CODES[code][0]
                         err_msg = AADSTS_CODES[code][1]
                         msg     = f" [{err}: {err_msg}]"
-                        print(f"{text_colors.red}[ - ]{text_colors.reset} {email}:{password}{msg}{gen_space(user)}", end='\r')
+                        print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{msg}{gen_space(user)}", end='\r')
                         self.userlist.remove(user)
                         break
 
                 # Only executed if the inner loop did NOT break
                 else:
-                    print(f"{text_colors.red}[ - ]{text_colors.reset} {email}:{password}{gen_space(user)}", end='\r')
+                    print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{gen_space(user)}", end='\r')
 
             # End template module code block logic.
             # --------------------------------------------------------
