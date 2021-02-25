@@ -294,6 +294,8 @@ if __name__ == "__main__":
         # Handle user enumeration module
         if module.type == "enum":
 
+            logging.info(f"Enumerating {len(users)} users via '{args.module}' module")
+
             # Provide the option to allow passing a custom password to the enumeration
             # module if needed
             if args.password:
@@ -310,8 +312,10 @@ if __name__ == "__main__":
             # Require a password, list of passwords, or file of passwords
             if (not args.password and not args.passwords and not args.passwordfile):
                 logging.error("Missing arguments: -p/--password | -ps/--passwords | "
-                            "-pf/--passwordfile")
+                              "-pf/--passwordfile")
                 sys.exit(1)
+
+            logging.info(f"Password spraying {len(users)} users via '{args.module}' module")
 
             # Perform item transformations to a uniform data type: List
             # Single password to be processed
