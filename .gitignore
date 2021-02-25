@@ -1,0 +1,16 @@
+# Ignore all compiled Python code
+*.pyc
+# Ignore all text files
+*.txt
+# Ignore all OS X .DS_Store files
+**/.DS_Store
+# Ignore all directories with compiled Python data
+**/__pycache__
+# Ignore unit test scripts
+**/test
+# Ignore custom directories
+venv/
+logs/
+results/
+# Negate requirements text file to include on commits
+!requirements.txt
