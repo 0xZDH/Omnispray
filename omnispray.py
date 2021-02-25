@@ -49,6 +49,16 @@ if __name__ == "__main__":
         help="Target domain for enumeration/spraying."
     )
 
+    # Module type
+    parser.add_argument(
+        "-t",
+        "--type",
+        type=str,
+        choices=['enum', 'spray'],
+        help="Module type. If left blank, Omnispray will attempt to autodetect " +
+             "the module type based on the module name."
+    )
+
     # Handle user/users/user file
     user_group.add_argument(
         "-u",
@@ -182,11 +192,20 @@ if __name__ == "__main__":
         logging.error(f"Invalid file: {args.passwordfile}")
         sys.exit(1)
 
+    # - Begin module validation
+
     # Validate the module provided by the user is, in fact, a module within
     # the modules directory
 
     # First, store a backup of the original value provided by the user
-    orig_mod    = args.module
+    orig_mod = args.module
+
+    # If no type is provided, check if the module is in a valid 'type'
+    # directory by checking for enum/ or spray/ in the value passed by
+    # the user
+    if not args.type:
+        if any(f"{p}/" in args.module for p in ['enum', 'spray']):
+            args.type  = args.module.split('/')[-2]
 
     # Then, strip any directories provided with the value
     args.module = args.module.split('/')[-1]
@@ -196,17 +215,28 @@ if __name__ == "__main__":
         args.module = args.module[:-3]
 
     # Now, validate the module file exists within the modules/ dir
-    if not os.path.isfile(f"modules/{args.module}.py"):
-        logging.error(f"Invalid file: {orig_mod}")
+    if args.type:
+        valid_module = os.path.isfile(f"modules/{args.type}/{args.module}.py")
+
+    # Attempt to dynamically identify the module type
+    else:
+        for t in ['enum', 'spray']:
+            valid_module = os.path.isfile(f"modules/{t}/{args.module}.py")
+            if valid_module:
+                args.type = t
+                break
+
+    if not valid_module:
+        logging.error(f"Invalid module file: {orig_mod}")
         logging.error("Please ensure the module Python file exists within the "
-                      "modules/ directory")
+                      "modules/ directory in the correct module type subdirectory.")
         sys.exit(1)
 
     # If the module exists, attempt to import
     try:
-        ASModule = __import__(f"modules.{args.module}", fromlist=['ASModule'])
+        ASModule = __import__(f"modules.{args.type}.{args.module}", fromlist=['ASModule'])
     except ModuleNotFoundError:
-        logging.error(f"Module, modules.{args.module}, failed to import 'ASModule'.")
+        logging.error(f"Module, modules.{args.type}.{args.module}, failed to import 'ASModule'.")
         sys.exit(1)
 
     # - Begin building the framework
