@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 
 import re
-import json
 import time
 import string
 import random
@@ -133,13 +132,13 @@ class ASModule(object):
             logging.debug(e)
             pass
 
-    def _send_request(self, request, url, auth=None, data=None, json_data=None,
+    def _send_request(self, request, url, auth=None, data=None, json=None,
                       headers=HTTP_HEADERS, allow_redirects=False):
         ''' Template for HTTP Requests '''
         return request(url,
                        auth=auth,
                        data=data,
-                       json=json_data,
+                       json=json,
                        headers=headers,
                        proxies=self.proxies,
                        timeout=self.args.timeout,

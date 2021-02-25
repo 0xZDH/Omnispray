@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 
-import json
 import time
 import logging
 import urllib3
@@ -127,15 +126,15 @@ class ASModule(object):
             logging.debug(e)
             pass
 
-    def _send_request(self, request, url, auth=None, data=None,
-                      json_data=None, headers=HTTP_HEADERS):
+    def _send_request(self, request, url, auth=None, data=None, json=None,
+                      headers=HTTP_HEADERS, allow_redirects=False):
         ''' Template for HTTP Requests '''
         return request(url,
                        auth=auth,
                        data=data,
-                       json=json_data,
+                       json=json,
                        headers=headers,
                        proxies=self.proxies,
                        timeout=self.args.timeout,
-                       allow_redirects=False,
+                       allow_redirects=allow_redirects,
                        verify=False)

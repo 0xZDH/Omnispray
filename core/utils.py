@@ -104,7 +104,7 @@ def build_email(user, domain):
 
 def check_email(user):
     ''' Validate email address syntax (not the best regexp) '''
-    return re.fullmatch('[^@]+@[^@]+\.[^@]+', email)
+    return re.fullmatch('[^@]+@[^@]+\.[^@]+', user)
 
 def gen_space(val):
     ''' Generate a fixed length space based on val passed '''
