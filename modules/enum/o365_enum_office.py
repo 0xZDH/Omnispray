@@ -105,9 +105,18 @@ class ASModule(object):
             r_body   = response.json()
 
             if r_status == 200:
-                if int(r_body['IfExistsResult']) == 0:
+                # It appears that both 0 and 6 response codes indicate a valid user - whereas 5 indicates
+                # the use of a different identity provider -- let's account for that
+                # https://www.redsiege.com/blog/2020/03/user-enumeration-part-2-microsoft-office-365/
+                # https://warroom.rsmus.com/enumerating-emails-via-office-com/
+                if int(r_body['IfExistsResult']) in [0, 6]:
                     self.successful_results.append(user)
                     logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}")
+
+                elif int(body['IfExistsResult']) == 5:
+                    self.successful_results.append(user)
+                    logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {email}")
+                    logging.debug(f"{user}: Different Identity Provider")
 
                 else:
                     print(f"{text_colors.red}[ - ]{text_colors.reset} {email}{gen_space(user)}", end='\r')
