@@ -53,6 +53,7 @@ class ASModule(object):
         self.executor.shutdown = lambda wait:None
 
         # Write the successful results
+        logging.info(f"Valid user accounts: {len(self.successful_results)}")
         with open(f"{self.out_dir}{ENUM_FILE}", 'a') as f:
             write_data(self.successful_results, f)
 

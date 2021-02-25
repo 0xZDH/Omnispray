@@ -59,6 +59,7 @@ class ASModule(object):
         self.executor.shutdown = lambda wait:None
 
         # Write the successful results
+        logging.info(f"Valid credentials: {len(self.successful_results)}")
         with open(f"{self.out_dir}{SPRAY_FILE}", 'a') as f:
             write_data(self.successful_results, f)
 
