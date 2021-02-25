@@ -16,6 +16,7 @@ urllib3.disable_warnings(urllib3.exceptions.InsecureRequestWarning)
 
 from functools import partial
 from core.utils import *
+from core.colors import text_colors
 from core.defaults import *
 from requests.auth import HTTPBasicAuth
 
