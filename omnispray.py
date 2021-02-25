@@ -17,10 +17,10 @@ __title__   = "Omnispray | Modular Enumeration and Password Spraying Suite"
 __version__ = "0.0.1"
 
 def signal_handler(signal, frame):
-    """ Signal handler for async routines.
+    ''' Signal handler for async routines.
         Call the module's shutdown function to cleanly exit upon
         receiving a CTRL-C signal.
-    """
+    '''
     module.shutdown(key=True)
     sys.exit(0)
 

@@ -21,10 +21,6 @@ from requests.auth import HTTPBasicAuth
 
 class ASModule(object):
 
-    # TODO: Set the final target URL here and define any params like email and/
-    #       or password via: {EMAIL}, {PASSWORD} within the string defitiniton
-    TGT_URL = "https://localhost"
-
     # Storage for successful results of each task
     successful_results = []
 
@@ -43,7 +39,7 @@ class ASModule(object):
         self.tested_file = ThreadWriter("tested.txt", kwargs['log_dir'])
 
     def shutdown(self, key=False):
-        """ Perform a shutdown and clean up of the asynchronous handler """
+        ''' Perform a shutdown and clean up of the asynchronous handler '''
         print()  # Print empty line
         if key:
             logging.warning("CTRL-C caught...")
@@ -66,7 +62,7 @@ class ASModule(object):
         self.tested_file.close()
 
     async def run(self, users, password):
-        """ Asyncronously execute task(s) """
+        ''' Asyncronously execute task(s) '''
         blocking_tasks = [
             self.loop.run_in_executor(
                 self.executor, partial(self._execute,
@@ -79,7 +75,7 @@ class ASModule(object):
             await asyncio.wait(blocking_tasks)
 
     def _execute(self, user, password):
-        """ Perform an asynchronous task """
+        ''' Perform an asynchronous task '''
         try:
             time.sleep(0.250)
 
@@ -102,9 +98,11 @@ class ASModule(object):
             # Write the tested username:password
             self.tested_file.write(f"{user}:{password}")
 
-            # TODO: If the target URL has GET parameters for user/password -
+            # TODO: Set the final target URL here and define any params like email
+            #       or password via: {EMAIL} / {PASSWORD} within the string defitiniton
+            #       If the target URL has GET parameters like user/password -
             #       set via .format().
-            url = self.TGT_URL
+            url = "https://localhost"
 
             # TODO: Define a custom set of headers if the request requires specific
             #       data to be passed via request headers, or set/add headers to the
@@ -193,7 +191,7 @@ class ASModule(object):
 
     def _send_request(self, request, url, auth=None, data=None,
                       json_data=None, headers=HTTP_HEADERS):
-        """ Template for HTTP Requests """
+        ''' Template for HTTP Requests '''
         return request(url,
                        auth=auth,
                        data=data,
