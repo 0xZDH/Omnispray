@@ -14,7 +14,7 @@ HTTP_HEADERS = {
     "Connection": "keep-alive",
     "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.14; rv:69.0) Gecko/20100101 Firefox/69.0",
     "Accept-Language": "en-US,en;q=0.5",
-    "Accept-Encoding": "gzip, deflate",    
+    "Accept-Encoding": "gzip, deflate",
     "Upgrade-Insecure-Requests": "1"
 }
 

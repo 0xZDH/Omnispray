@@ -181,7 +181,7 @@ if __name__ == "__main__":
     if (args.passwordfile and not os.path.isfile(args.passwordfile)):
         logging.error(f"Invalid file: {args.passwordfile}")
         sys.exit(1)
-    
+
     # Validate the module provided by the user is, in fact, a module within
     # the modules directory
 
@@ -204,7 +204,7 @@ if __name__ == "__main__":
 
     # If the module exists, attempt to import
     try:
-        module_import = __import__(f"modules.{args.module}", fromlist=['ASModule'])
+        ASModule = __import__(f"modules.{args.module}", fromlist=['ASModule'])
     except ModuleNotFoundError:
         logging.error(f"Module, modules.{args.module}, failed to import 'ASModule'.")
         sys.exit(1)
@@ -246,7 +246,7 @@ if __name__ == "__main__":
     # File of users to be processed
     else:
         users = get_list_from_file(args.userfile)
-    
+
     # Unique the user list to avoid duplicates
     users = list(set(users))
 
@@ -257,8 +257,15 @@ if __name__ == "__main__":
         # Handle user enumeration module
         if module.type == "enum":
 
+            # Provide the option to allow passing a custom password to the enumeration
+            # module if needed
+            if args.password:
+                password = args.password
+            else:
+                password = 'password'
+
             # Run the loop
-            loop.run_until_complete(module.run(users))
+            loop.run_until_complete(module.run(users, password))
 
         # Handle password spray module
         elif module.type == "spray":

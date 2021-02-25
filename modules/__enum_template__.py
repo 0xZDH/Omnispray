@@ -62,19 +62,20 @@ class ASModule(object):
         # Close the open file handles
         self.log_file.close()
 
-    async def run(self, users):
+    async def run(self, users, password='password'):
         """ Asyncronously execute task(s) """
         blocking_tasks = [
             self.loop.run_in_executor(
                 self.executor, partial(self._execute,
-                                       user=user)
+                                       user=user,
+                                       password=password)
             )
             for user in users
         ]
         if blocking_tasks:
             await asyncio.wait(blocking_tasks)
 
-    def _execute(self, user):
+    def _execute(self, user, password):
         """ Perform an asynchronous task """
         try:
             time.sleep(0.250)
@@ -119,11 +120,10 @@ class ASModule(object):
             # ----
             jData = f"{{ 'data': \"garbage\" }}"
 
-            # TODO: If BasicAuth is required, leverage the __spray_template__.py
-            #       module template instead to allow for user + password to be
-            #       provided.
-            #       Or if a garbage password can be used, define a `password`
-            #       variable and import `from requests.auth import HTTPBasicAuth`
+            # TODO: If BasicAuth is required, establish a BasicAuth object and pass
+            #       to the _send_request function.
+            #       Delete this and the `auth` param in _send_request if not using.
+            auth  = HTTPBasicAuth(user, password)
 
             # TODO: Perform an HTTP request and collect the results. Pass the HTTP
             #       request type via the first parameter and any subsequent data
