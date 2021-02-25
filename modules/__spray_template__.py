@@ -37,6 +37,9 @@ class ASModule(object):
         # Open file handles for logging and writing test cases
         self.log_file    = ThreadWriter(LOG_FILE, kwargs['log_dir'])
         self.tested_file = ThreadWriter("tested.txt", kwargs['log_dir'])
+        # Globally track users being sprayed so we can remove users
+        # as needed
+        self.users = []
 
     def shutdown(self, key=False):
         ''' Perform a shutdown and clean up of the asynchronous handler '''
@@ -61,7 +64,7 @@ class ASModule(object):
         self.log_file.close()
         self.tested_file.close()
 
-    async def run(self, users, password):
+    async def run(self, password):
         ''' Asyncronously execute task(s) '''
         blocking_tasks = [
             self.loop.run_in_executor(
@@ -69,7 +72,7 @@ class ASModule(object):
                                        user=user,
                                        password=password)
             )
-            for user in users
+            for user in self.users
         ]
         if blocking_tasks:
             await asyncio.wait(blocking_tasks)
@@ -154,6 +157,7 @@ class ASModule(object):
             r_status = response.status_code
             if r_status == 200:
                 self.successful_results.append(f"{user}:{password}")
+                self.users.remove(user)  # Stop spraying user if valid
                 logging.info("VALID")
             else:
                 logging.info("INVALID")
@@ -165,6 +169,7 @@ class ASModule(object):
             r_headers = response.headers
             if "target_header" in (h.lower() for h in r_headers.keys()):
                 self.successful_results.append(f"{user}:{password}")
+                self.users.remove(user)  # Stop spraying user if valid
                 logging.info("VALID")
             else:
                 logging.info("INVALID")
@@ -176,6 +181,7 @@ class ASModule(object):
             r_body = response.content
             if "target_value" in r_body:
                 self.successful_results.append(f"{user}:{password}")
+                self.users.remove(user)  # Stop spraying user if valid
                 logging.info("VALID")
             else:
                 logging.info("INVALID")

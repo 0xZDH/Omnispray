@@ -322,6 +322,9 @@ if __name__ == "__main__":
             # Unique the user list to avoid duplicates
             passwords = list(set(passwords))
 
+            # Set the user list for the module class
+            module.users = users
+
             # Based on: https://github.com/0xZDH/o365spray
             for password_chunk in get_chunks_from_list(passwords, args.count):
                 logging.info("Password spraying the following passwords: [%s]" % (
@@ -331,7 +334,7 @@ if __name__ == "__main__":
                 # Loop through each password individually so it's easier to keep
                 # track and avoid duplicate scans once a removal condition is hit
                 for password in password_chunk:
-                    loop.run_until_complete(module.run(users, password))
+                    loop.run_until_complete(module.run(password))
 
                     # If the module has a defined lockout handler, stop if we hit
                     # the threshold
