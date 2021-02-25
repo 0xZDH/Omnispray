@@ -18,7 +18,7 @@ class ThreadWriter(object):
         ''' Write data to file '''
         self.out_file.write(f"{data}\n")
 
-    def close():
+    def close(self):
         ''' Close the file handle '''
         self.out_file.close()
 

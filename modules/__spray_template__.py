@@ -25,6 +25,7 @@ class ASModule(object):
     successful_results = []
 
     def __init__(self, *args, **kwargs):
+        self.type     = "spray"
         self.args     = kwargs['args']
         self.loop     = kwargs['loop']
         self.out_dir  = kwargs['out_dir']
