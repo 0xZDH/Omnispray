@@ -115,7 +115,7 @@ class ASModule(object):
             #       but now indicates invalid authentication attempts (whether it be invalid
             #       username or password). 401 responses also indicate an invalid authentication
             #       attempt
-            if status == 200:
+            if r_status == 200:
                 self.successful_results.append(f"{user}:{password}")
                 logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}:{password}")
                 self.users.remove(user)
