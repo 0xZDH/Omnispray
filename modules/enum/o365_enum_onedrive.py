@@ -1,7 +1,5 @@
 #!/usr/bin/env python3
 
-# -- Enumeration Module Template -- #
-
 import sys
 import json
 import time
