@@ -284,9 +284,6 @@ if __name__ == "__main__":
     else:
         users = get_list_from_file(args.userfile)
 
-    # Unique the user list to avoid duplicates
-    users = list(set(users))
-
     # - Begin enumeration/spraying
 
     try:
@@ -329,9 +326,6 @@ if __name__ == "__main__":
             # File of passwords to be processed
             else:
                 passwords = get_list_from_file(args.passwordfile)
-
-            # Unique the user list to avoid duplicates
-            passwords = list(set(passwords))
 
             # Set the user list for the module class
             module.users = users
