@@ -109,4 +109,4 @@ def check_email(user):
 
 def gen_space(val):
     ''' Generate a fixed length space based on val passed '''
-    return ' ' * (50 - len(val))
+    return ' ' * (75 - len(val))
