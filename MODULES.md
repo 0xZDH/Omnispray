@@ -19,7 +19,7 @@ Omnispray handles the asynchronous execution and username/password pass through 
 
 | Name | Target | Source(s) | Technique |
 | ---  | ---    | ---       | ---       |
-| o365_enum_activesync | Office 365 | o365spray<br/>[grimhacker: office365userenum](https://bitbucket.org/grimhacker/office365userenum/src/master/) | Confirm the HTTP response status code when requesting https://outlook.office365.com/Microsoft-Server-ActiveSync with a username/email and a password (defaults to 'password') via BasicAuth. |
+| o365_enum_activesync | Office 365 | o365spray<br/>[grimhacker: office365userenum](https://bitbucket.org/grimhacker/office365userenum/src/master/) | Confirm the HTTP response status code when requesting https://outlook.office365.com/Microsoft-Server-ActiveSync with a username/email and a password (defaults to 'password') via BasicAuth.<br/>* **This performs a single authentication attempt per user** |
 | o365_enum_office     | Office 365 | o365spray<br/>[gremwell: o365enum](https://github.com/gremwell/o365enum) | Confirm the value of `IfExistsResult` in the response body when requesting https://login.microsoftonline.com/common/GetCredentialType?mkt=en-US with a username/email via `username` in the JSON POST data. |
 | o365_enum_onedrive   | Office 365 | o365spray<br/>[nyxgeek: onedrive_user_enum](https://github.com/nyxgeek/onedrive_user_enum) | Confirm the HTTP response status code when requesting https://[TENANT]-my.sharepoint.com/personal/[USER]\_[DOMAIN]\_[TLD]/_layouts/15/onedrive.aspx and filling in the specific information within the URL via the username/email and target domain (via --domain). |
 
