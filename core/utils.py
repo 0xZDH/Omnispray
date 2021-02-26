@@ -3,6 +3,7 @@
 # Utility functions/classes
 
 import re
+import sys
 import time
 from datetime import timedelta, datetime
 
@@ -108,4 +109,4 @@ def check_email(user):
 
 def gen_space(val):
     ''' Generate a fixed length space based on val passed '''
-    return ' ' * (20 - len(val))
+    return ' ' * (50 - len(val))

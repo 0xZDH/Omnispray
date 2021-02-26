@@ -105,7 +105,8 @@ class ASModule(object):
                 return
 
             # Keep track of tested names in case we ctrl-c
-            self.tested_file.write(f"{user}:{password}")
+            creds = f"{user}:{password}"
+            self.tested_file.write(creds)
 
             # Build custom headers
             custom_headers = HTTP_HEADERS
@@ -132,7 +133,7 @@ class ASModule(object):
             r_status = response.status_code
 
             if r_status == 200:
-                self.successful_results.append(f"{user}:{password}")
+                self.successful_results.append(creds)
                 logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}:{password}")
                 self.users.remove(user)
 
@@ -150,13 +151,13 @@ class ASModule(object):
                         err     = AADSTS_CODES[code][0]
                         err_msg = AADSTS_CODES[code][1]
                         msg     = f" [{err}: {err_msg}]"
-                        print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{msg}{gen_space(user)}", end='\r')
+                        print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{msg}{gen_space(creds)}", end='\r')
                         self.userlist.remove(user)
                         break
 
                 # Only executed if the inner loop did NOT break
                 else:
-                    print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{gen_space(user)}", end='\r')
+                    print(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{gen_space(creds)}", end='\r')
 
             # End template module code block logic.
             # --------------------------------------------------------
