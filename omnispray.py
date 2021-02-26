@@ -143,7 +143,7 @@ if __name__ == "__main__":
         "--rate",
         type=int,
         default=10,
-        help="Number of concurrent connections during verification. " +
+        help="Number of concurrent connections during enumeration/spraying. " +
              "Default: 10"
     )
     parser.add_argument(

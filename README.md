@@ -24,7 +24,7 @@ The primary goal is to provide a framework to allow for the easy development and
 | -l<br/>--lockout | Lockout policy reset time (in minutes). Default: 15 minutes                                            |
 | --timeout     | Request timeout in seconds. Default: 25                                                                   |
 | --proxy       | Proxy to pass traffic through (e.g. http://127.0.0.1:8080).                                               |
-| --rate        | Number of concurrent connections during verification. Default: 10                                         |
+| --rate        | Number of concurrent connections during enumeration/spraying. Default: 10                                 |
 | --version     | Print the tool version                                                                                    |
 | --debug       | Print debug information                                                                                   |
 
