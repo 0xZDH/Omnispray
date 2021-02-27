@@ -80,6 +80,24 @@ class ASModule(object):
         if blocking_tasks:
             await asyncio.wait(blocking_tasks)
 
+    def prechecks(self):
+        ''' Perform module prechecks to validate certain data is set
+            via command line args.
+
+        TODO: Modify or remove this function as needed. Retruning False
+              will cause Omnispray to exit, returning True will allow the
+              module to run as expected.
+        '''
+        # Validate the user provided a domain when required
+        if not self.args.domain:
+            logging.error("Missing arguments: -d/--domain")
+            return False
+
+        # Validate the user provided a URL when required
+        if not self.args.url:
+            logging.error("Missing arguments: --url")
+            return False
+
     def _execute(self, user, password):
         ''' Perform an asynchronous task '''
         try:
@@ -91,6 +109,9 @@ class ASModule(object):
             # TODO: This is the 'core' function of the module that will handle the
             #       logic for the spray task being performed.
 
+            # TODO: If the domain is required for setting users via DOMAIN\user or
+            #       any other reason, validate the domain was provided via the
+            #       `prechecks` function.
             # TODO: If email addresses are required, validate with domain
             #       or validate the user provided is in an email format.
             # Perform email check and validation
@@ -109,6 +130,11 @@ class ASModule(object):
             #       If the target URL has GET parameters like user/password -
             #       set via .format().
             url = "https://localhost"
+
+            # TODO: If the URL is custom per target, the --url flag can be leveraged,
+            #       but ensure to validate the URL was provided via the `prechecks`
+            #       function.
+            url = self.args.url
 
             # TODO: Define a custom set of headers if the request requires specific
             #       data to be passed via request headers, or set/add headers to the

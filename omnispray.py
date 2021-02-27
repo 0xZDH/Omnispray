@@ -270,6 +270,13 @@ if __name__ == "__main__":
                'out_dir': OUT_DIR }
     module = module_import.ASModule(**kwargs)
 
+    # If the module has prechecks, run them and exit if any
+    # prechecks fail
+    module_precheck = getattr(module, "prechecks", None)
+    if callable(module_precheck):
+        if not module_precheck():
+            sys.exit(1)
+
     # Since all modules will require at least a set of user(s),
     # perform item transformations to a uniform data type: List
     # Single user to be processed
