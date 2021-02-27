@@ -92,7 +92,6 @@ class ASModule(object):
 
             elif not check_email(user):
                 logging.error(f"Invalid user: {user}")
-                self.users.remove(user)
                 return
 
             # Grab the office data and set the current user
