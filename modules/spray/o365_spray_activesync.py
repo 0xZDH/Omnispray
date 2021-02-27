@@ -97,6 +97,7 @@ class ASModule(object):
 
             elif not check_email(user):
                 logging.error(f"Invalid user: {user}")
+                self.users.remove(user)
                 return
 
             # Keep track of tested names in case we ctrl-c

@@ -75,6 +75,13 @@ class ASModule(object):
         if blocking_tasks:
             await asyncio.wait(blocking_tasks)
 
+    def prechecks(self):
+        ''' Perform module prechecks to validate certain data is set
+            via command line args. '''
+        if not self.args.url:
+            logging.error("Missing arguments: --url")
+            return False
+
     def _execute(self, user, password):
         ''' Perform an asynchronous task '''
         try:
@@ -95,16 +102,10 @@ class ASModule(object):
 
             elif not check_email(user):
                 logging.error(f"Invalid user: {user}")
+                self.users.remove(user)
                 return
 
-            # TODO: `url` needs to be filled in by the user as each ADFS instance is unique
-            # Validate  the user provided a target URL
-            if not self.args.url:
-                logging.error(f"Missing argument --url")
-                self.shutdown()
-
-            else:
-                url = self.args.url
+            url = self.args.url
 
             # Keep track of tested names in case we ctrl-c
             creds = f"{user}:{password}"
