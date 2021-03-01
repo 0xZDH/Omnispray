@@ -79,7 +79,7 @@ class ASModule(object):
         ''' Perform module prechecks to validate certain data is set
             via command line args. '''
         if not self.args.url:
-            logging.error("Missing arguments: --url")
+            logging.error("Missing module arguments: --url")
             return False
 
     def _execute(self, user, password):

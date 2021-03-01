@@ -74,7 +74,7 @@ class ASModule(object):
         ''' Perform module prechecks to validate certain data is set
             via command line args. '''
         if not self.args.domain:
-            logging.error("Missing arguments: -d/--domain")
+            logging.error("Missing module arguments: -d/--domain")
             return False
 
     def _execute(self, user, password):
