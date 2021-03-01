@@ -5,6 +5,8 @@
 import re
 import sys
 import time
+import string
+import random
 from datetime import timedelta, datetime
 
 class ThreadWriter(object):
@@ -110,3 +112,9 @@ def check_email(user):
 def gen_space(val):
     ''' Generate a fixed length space based on val passed '''
     return ' ' * (75 - len(val))
+
+def random_string(n):
+    ''' Return a random string of length N using all ASCII characters '''
+    return ''.join(
+        random.choice(string.ascii_letters) for _ in range(n)
+    )
