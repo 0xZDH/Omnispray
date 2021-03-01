@@ -152,10 +152,11 @@ Provide the target domain in the form of 'domain.com'.</pre>
     <td> <b>Flags Required</b> </td>
     <td>
 <pre><i>-d/--domain</i>:
-Provide the target domain in the form of 'domain.com'.
+Provide the target domain in the form of 'domain.com' or 'domain' for use with
+username formatting via 'DOMAIN\user'.
 <br/>
 <i>--url</i>:
-Provide the target OWA URL in the form of <a href="#">https://example.com/</a>.
+Provide the target OWA URL in the form of <a href="#">https://target.com/</a>.
 Optionally, include '/Microsoft-Server-ActiveSync' - if not included, the module will
 automatically append it to the provided URL.</pre>
     </td>
@@ -221,7 +222,7 @@ automatically append it to the provided URL.</pre>
     <td> <b>Flags Required</b> </td>
     <td>
 <pre><i>--url</i>:
-Provide the target ADFS URL in the form of <a href="#">https://example.com/...</a></pre>
+Provide the target ADFS URL in the form of <a href="#">https://target.com/...</a></pre>
     </td>
   </tr>
 </table>
@@ -283,10 +284,11 @@ Provide the target ADFS URL in the form of <a href="#">https://example.com/...</
     <td> <b>Flags Required</b> </td>
     <td>
 <pre><i>-d/--domain</i>:
-Provide the target domain in the form of 'domain.com'.
+Provide the target domain in the form of 'domain.com' or 'domain' for use with
+username formatting via 'DOMAIN\user'.
 <br/>
 <i>--url</i>:
-Provide the target OWA URL in the form of <a href="#">https://example.com</a>.
+Provide the target OWA URL in the form of <a href="#">https://target.com</a>.
 Optionally, include '/Microsoft-Server-ActiveSync' - if not included, the module will
 automatically append it to the provided URL.</pre>
     </td>
