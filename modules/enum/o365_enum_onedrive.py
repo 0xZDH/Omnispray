@@ -33,9 +33,6 @@ class ASModule(object):
         }
         # Open file handles for logging and writing test cases
         self.log_file = ThreadWriter(LOG_FILE, kwargs['log_dir'])
-        if not self.args.domain:
-            logging.info("Missing argument for module: -d/--domain")
-            sys.exit(1)
 
     def shutdown(self, key=False):
         ''' Perform a shutdown and clean up of the asynchronous handler '''
