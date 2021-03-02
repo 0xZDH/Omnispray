@@ -35,7 +35,7 @@ All modules can be found in the [modules/](modules/) directory. They are broken 
 
 ### Microsoft Office 365
 
-> Office 365: The default module used by o365spray.py is `o365_enum_office`
+> O365 User Enumeration: The default module used by o365spray.py is `o365_enum_office`
 
 <!-- O365 Enumeration via ActiveSync module -->
 <table>
@@ -127,6 +127,8 @@ Provide the target domain in the form of 'domain.com'.</pre>
 
 ### OWA
 
+> OWA User Enumeration
+
 <!-- OWA Enumeration via ActiveSync timing module -->
 <table>
   <tr>
@@ -168,7 +170,7 @@ automatically append it to the provided URL.</pre>
 
 ### Microsoft Office 365
 
-> Office 365: The default module used by o365spray.py is `o365_spray_activesync`
+> O365 Password Spraying: The default module used by o365spray.py is `o365_spray_activesync`
 
 <!-- O365 Spraying via ActiveSync module -->
 <table>
@@ -259,6 +261,8 @@ Provide the target ADFS URL in the form of <a href="#">https://target.com/...</a
 </table>
 
 ### OWA
+
+> OWA Password Spraying
 
 <!-- OWA Spraying via ActiveSync module -->
 <table>
