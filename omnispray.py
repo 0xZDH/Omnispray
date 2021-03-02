@@ -13,7 +13,7 @@ from pathlib import Path
 
 from core.utils import *
 
-__title__   = "Omnispray | Modular Enumeration and Password Spraying Suite"
+__title__   = "Omnispray | Modular Enumeration and Password Spraying Framework"
 __version__ = "0.1"
 
 def signal_handler(signal, frame):
