@@ -1,6 +1,6 @@
 # Omnispray
 
-> Omnispray | Modular Enumeration and Password Spraying Framework -- v0.1
+> Omnispray | Modular Enumeration and Password Spraying Framework -- v0.1.1
 
 Omnispray aims to replace tools such as [o365spray](https://github.com/0xZDH/o365spray) and provide a modular framework to expand enumeration and spraying beyond just a single target/application.
 

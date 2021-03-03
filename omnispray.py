@@ -14,7 +14,7 @@ from pathlib import Path
 from core.utils import *
 
 __title__   = "Omnispray | Modular Enumeration and Password Spraying Framework"
-__version__ = "0.1"
+__version__ = "0.1.1"
 
 def signal_handler(signal, frame):
     ''' Signal handler for async routines.

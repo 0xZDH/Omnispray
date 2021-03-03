@@ -123,7 +123,7 @@ class ASModule(object):
             r_time = response.elapsed.total_seconds()
             if r_time < self.base_time:
                 self.successful_results.append(user)
-                logging.info(f"{text_colors.yellow}[ + ]{text_colors.reset} {user}")
+                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
                 self.users.remove(user)
 
             else:
