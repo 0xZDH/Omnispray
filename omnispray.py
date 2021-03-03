@@ -254,16 +254,17 @@ if __name__ == "__main__":
         logging.error(f"Module, modules.{args.type}.{args.module}, failed to import 'ASModule'.")
         sys.exit(1)
 
+    # - Begin building the framework
+
+    print(banner(args, __version__))
+
     # Define the task jitter by assigning a pause function
     # from utils.py. Handle all negative values as random
     if args.pause < 0:
         args.pause = lambda: time.sleep(random_float())
     else:
-        args.pause = lambda: time.sleep(args.pause)
-
-    # - Begin building the framework
-
-    print(banner(args, __version__))
+        p_val = float(args.pause)
+        args.pause = lambda: time.sleep(p_val)
 
     # Initialize the Asyncio loop
     loop = asyncio.get_event_loop()

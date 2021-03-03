@@ -98,6 +98,8 @@ class ASModule(object):
             logging.error("Missing module arguments: --url")
             return False
 
+        return True
+
     def _execute(self, user, password):
         ''' Perform an asynchronous task '''
         try:

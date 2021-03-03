@@ -47,7 +47,7 @@ def banner(args, version):
                 BANNER += " minutes"
             if arg == 'rate':
                 BANNER += " threads"
-            if arg == 'timeout':
+            if arg == 'timeout' or arg == 'pause':
                 BANNER += " seconds"
     # Add timestamp for start of spray
     space   = ' ' * (15 - len('start'))
