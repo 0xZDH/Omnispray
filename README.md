@@ -6,6 +6,10 @@ Omnispray aims to replace tools such as [o365spray](https://github.com/0xZDH/o36
 
 The primary goal is to provide a framework to allow for the easy development and implementation of user enumeration and password spraying techniques for a variety of targets/applications. While there are currently several prebuilt modules included, this tool provides module templates to give users the tools needed to extend the tools usage for non-standard cases. The goal is also to provide a central tool to handle all enumeration and spraying.
 
+## Modules
+
+See [MODULES.md](MODULES.md) for information on custom module development as well as details on included modules (O365, OWA, etc.).
+
 ## Usage
 
 | Flag         | Description                                                                                                |
@@ -41,7 +45,3 @@ O365 password spraying via the ActiveSync module.
                        --module o365_spray_activesync \
                        --count 3 --lockout 30
 ```
-
-## Modules
-
-See [MODULES.md](MODULES.md) for information on custom module development as well as details on prebuilt/included modules.
