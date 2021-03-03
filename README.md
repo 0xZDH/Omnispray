@@ -1,6 +1,6 @@
 # Omnispray
 
-> Omnispray | Modular Enumeration and Password Spraying Framework -- v0.1
+> Omnispray | Modular Enumeration and Password Spraying Framework -- v0.1.1
 
 Omnispray aims to replace tools such as [o365spray](https://github.com/0xZDH/o365spray) and provide a modular framework to expand enumeration and spraying beyond just a single target/application.
 
@@ -28,6 +28,7 @@ See [MODULES.md](MODULES.md) for information on custom module development as wel
 | -l<br/>--lockout | Lockout policy reset time (in minutes). Default: 15 minutes                                            |
 | --timeout     | Request timeout in seconds. Default: 25                                                                   |
 | --proxy       | Proxy to pass traffic through (e.g. http://127.0.0.1:8080).                                               |
+| --pause       | Sleep (jitter) time before each task is executed in seconds. If set to '-1', a random pause, between 0.250 and 0.750, will occur before each task execution. Default: 0.250 |
 | --rate        | Number of concurrent connections during enumeration/spraying. Default: 10                                 |
 | --version     | Print the tool version                                                                                    |
 | --debug       | Print debug information                                                                                   |

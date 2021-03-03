@@ -14,7 +14,7 @@ from pathlib import Path
 from core.utils import *
 
 __title__   = "Omnispray | Modular Enumeration and Password Spraying Framework"
-__version__ = "0.1"
+__version__ = "0.1.1"
 
 def signal_handler(signal, frame):
     ''' Signal handler for async routines.
@@ -140,6 +140,14 @@ if __name__ == "__main__":
 
     # Generic tool flags
     parser.add_argument(
+        "--pause",
+        type=float,
+        default=0.250,
+        help="Sleep (jitter) time before each task is executed in seconds. " +
+             "If set to '-1', a random pause, between 0.250 and 0.750, will " +
+             "occur before each task execution. Default: 0.250"
+    )
+    parser.add_argument(
         "--rate",
         type=int,
         default=10,
@@ -249,6 +257,14 @@ if __name__ == "__main__":
     # - Begin building the framework
 
     print(banner(args, __version__))
+
+    # Define the task jitter by assigning a pause function
+    # from utils.py. Handle all negative values as random
+    if args.pause < 0:
+        args.pause = lambda: time.sleep(random_float())
+    else:
+        p_val = float(args.pause)
+        args.pause = lambda: time.sleep(p_val)
 
     # Initialize the Asyncio loop
     loop = asyncio.get_event_loop()

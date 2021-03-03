@@ -14,6 +14,7 @@ from functools import partial
 from core.utils import *
 from core.colors import text_colors
 from core.defaults import *
+from requests.auth import HTTPBasicAuth
 
 class ASModule(object):
 
@@ -90,12 +91,17 @@ class ASModule(object):
             self.args.url = self.args.url.rstrip('/') + "/Microsoft-Server-ActiveSync"
 
         # Once prechecks have passed, identify the baseline response time
-        self.base_time = self._base_response_time()
+        self.base_time  = self._base_response_time()
+        # Define the threshold
+        self.base_time *= 0.6
+
+        return True
 
     def _execute(self, user, password):
         ''' Perform an asynchronous task '''
         try:
-            time.sleep(0.250)
+            # Task jitter
+            self.args.pause()
 
             # --------------------------------------------------------
             # For new modules, modify the below code block logic
@@ -117,7 +123,7 @@ class ASModule(object):
             r_time = response.elapsed.total_seconds()
             if r_time < self.base_time:
                 self.successful_results.append(user)
-                logging.info(f"{text_colors.yellow}[ + ]{text_colors.reset} {user}")
+                logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
                 self.users.remove(user)
 
             else:
@@ -159,6 +165,7 @@ class ASModule(object):
 
         avg_time = 0
         for user in test_users:
+            url      = self.args.url
             auth     = HTTPBasicAuth(user, test_password)
             response = self._send_request(requests.get,
                                           url,
