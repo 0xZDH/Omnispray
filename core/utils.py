@@ -118,3 +118,7 @@ def random_string(n):
     return ''.join(
         random.choice(string.ascii_letters) for _ in range(n)
     )
+
+def random_float(start=0.250, stop=0.750):
+    ''' Return a random float between the start and stop to 3 decimals '''
+    return float("{:.3f}".format(random.uniform(start, stop)))

@@ -140,6 +140,14 @@ if __name__ == "__main__":
 
     # Generic tool flags
     parser.add_argument(
+        "--pause",
+        type=float,
+        default=0.250,
+        help="Sleep (jitter) time before each task is executed in seconds. " +
+             "If set to '-1', a random pause, between 0.250 and 0.750, will " +
+             "occur before each task execution. Default: 0.250"
+    )
+    parser.add_argument(
         "--rate",
         type=int,
         default=10,
@@ -245,6 +253,13 @@ if __name__ == "__main__":
     except ModuleNotFoundError:
         logging.error(f"Module, modules.{args.type}.{args.module}, failed to import 'ASModule'.")
         sys.exit(1)
+
+    # Define the task jitter by assigning a pause function
+    # from utils.py. Handle all negative values as random
+    if args.pause < 0:
+        args.pause = lambda: time.sleep(random_float())
+    else:
+        args.pause = lambda: time.sleep(args.pause)
 
     # - Begin building the framework
 
