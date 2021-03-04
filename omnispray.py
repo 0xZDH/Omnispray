@@ -339,6 +339,10 @@ if __name__ == "__main__":
 
     # - Begin enumeration/spraying
 
+    # Current list of file handle attribute names that are
+    # used by the included modules and module templates
+    file_handles = [ "log_file", "tested_file", "success_file" ]
+
     try:
 
         # Handle user enumeration module
@@ -359,6 +363,12 @@ if __name__ == "__main__":
                 for user_chunk in get_chunks_from_list(users, args.split):
                     logging.info(f"Enumerating {len(user_chunk)} user(s)")
                     loop.run_until_complete(module.run(user_chunk, password))
+
+                    # Flush the open files after each rotation
+                    for f in file_handles:
+                        f_handle = getattr(module, f, None)
+                        if f_handle:
+                            f_handle.flush()
 
                     # Check if we reached the last user chunk
                     if not check_last_chunk(user_chunk, users):
@@ -405,6 +415,12 @@ if __name__ == "__main__":
                 # track and avoid duplicate scans once a removal condition is hit
                 for password in password_chunk:
                     loop.run_until_complete(module.run(password))
+
+                    # Flush the open files after each rotation
+                    for f in file_handles:
+                        f_handle = getattr(module, f, None)
+                        if f_handle:
+                            f_handle.flush()
 
                     # If the module has a defined lockout handler, stop if we hit
                     # the threshold

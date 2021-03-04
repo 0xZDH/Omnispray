@@ -21,6 +21,10 @@ class ThreadWriter(object):
         ''' Write data to file '''
         self.out_file.write(f"{data}\n")
 
+    def flush(self):
+        ''' Flush the file buffer '''
+        self.out_file.flush()
+
     def close(self):
         ''' Close the file handle '''
         self.out_file.close()
