@@ -425,8 +425,8 @@ if __name__ == "__main__":
                 # Only executed if the inner loop DID break
                 break
 
-            else:
-                logging.error(f"Invalid module type: {module.type}")
+        else:
+            logging.error(f"Invalid module type: {module.type}")
 
         # Call the module's shutdown function to exit cleanly. Otherwise,
         # it can be triggered via a CTRL-C signal.
