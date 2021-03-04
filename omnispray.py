@@ -161,6 +161,12 @@ if __name__ == "__main__":
         help="URL of proxy to request instead of the module URL. This is to " +
              "be used with tools such as FireProx."
     )
+    parser.add_argument(
+        "--proxy-headers",
+        type=str,
+        nargs='+',
+        help="Custom headers to use when a --proxy-url has been provided"
+    )
 
     # Generic tool flags
     parser.add_argument(

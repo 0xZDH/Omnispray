@@ -31,6 +31,7 @@ See [MODULES.md](MODULES.md) for information on custom module development as wel
 | --timeout     | Request timeout in seconds. Default: 25                                                                   |
 | --proxy       | Proxy to pass traffic through (e.g. http://127.0.0.1:8080).                                               |
 | --proxy-url   | URL of proxy to request instead of the module URL. This is to be used with tools such as FireProx.        |
+| --proxy-headers  | Custom headers to use when a --proxy-url has been provided (e.g. "X-My-X-Forwarded-For: 127.0.0.1" when using FireProx) |
 | --pause       | Sleep (jitter) time before each task is executed in seconds. If set to '-1', a random pause, between 0.250 and 0.750, will occur before each task execution. Default: 0.250 |
 | --rate        | Number of concurrent connections during enumeration/spraying. Default: 10                                 |
 | --version     | Print the tool version                                                                                    |

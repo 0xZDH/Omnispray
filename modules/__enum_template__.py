@@ -146,6 +146,13 @@ class ASModule(object):
             custom_headers = HTTP_HEADERS
             custom_headers['Custom-Header'] = "Value"
 
+            # TODO: If the --proxy-url flag is specified, and the user provided custom
+            #       headers via --proxy-headers, set them via the custom_headers
+            if self.args.proxy_url and self.args.proxy_headers:
+                for header in self.args.proxy_headers:
+                    header = header.split(':')
+                    custom_headers[header[0]] = ':'.join(header[1:]).strip()
+
             # TODO: Build POST data, if applicable, based on direct or JSON objects.
             #       Choose one or the other of the following objects and set them
             #       in the _send_request call accordingly.
