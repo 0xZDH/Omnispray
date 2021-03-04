@@ -81,13 +81,14 @@ class OmniModule(object):
             logging.error("Missing module arguments: -d/--domain")
             return False
 
-        if not self.args.url:
+        # If --url not provided, check if --proxy-url was provided
+        if not self.args.url and not self.args.proxy_url:
             logging.error("Missing module arguments: --url")
             return False
 
         # Ensure the custom URL provided by the user includes the
         # ActiveSync path
-        if "Microsoft-Server-ActiveSync" not in self.args.url:
+        if self.args.url and "Microsoft-Server-ActiveSync" not in self.args.url:
             self.args.url = self.args.url.rstrip('/') + "/Microsoft-Server-ActiveSync"
 
         # Once prechecks have passed, identify the baseline response time
@@ -117,11 +118,26 @@ class OmniModule(object):
             user = user.split('@')[0]  # Remove email portion if present
             user = f"{self.args.domain}\\{user}"  # Add domain
 
-            url      = self.args.url
+            # Build custom headers in case we need to handle --proxy-headers
+            custom_headers = HTTP_HEADERS
+
+            # Handle the --proxy-url flag
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        custom_headers[header[0]] = ':'.join(header[1:]).strip()
+
+            else:
+                url  = self.args.url
+
             auth     = HTTPBasicAuth(user, password)
             response = self._send_request(requests.get,
                                           url,
-                                          auth=auth)
+                                          auth=auth,
+                                          headers=custom_headers)
 
             r_time = response.elapsed.total_seconds()
             if r_time < self.base_time:

@@ -127,7 +127,18 @@ class OmniModule(object):
                 'scope':       'openid'
             }
 
-            url      = "https://login.microsoft.com/common/oauth2/token"
+            # Handle the --proxy-url flag
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        custom_headers[header[0]] = ':'.join(header[1:]).strip()
+
+            else:
+                url  = "https://login.microsoft.com/common/oauth2/token"
+
             response = self._send_request(requests.post,
                                           url,
                                           data=data,

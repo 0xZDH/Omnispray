@@ -76,7 +76,8 @@ class OmniModule(object):
     def prechecks(self):
         ''' Perform module prechecks to validate certain data is set
             via command line args. '''
-        if not self.args.url:
+        # If --url not provided, check if --proxy-url was provided
+        if not self.args.url and not self.args.proxy_url:
             logging.error("Missing module arguments: --url")
             return False
 
@@ -110,16 +111,26 @@ class OmniModule(object):
                 self.users.remove(user)
                 return
 
-            url = self.args.url
-
             # Build user:password var for reuse with spacing
             creds = f"{user}:{password}"
+
+            # Handle the --proxy-url flag
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        custom_headers[header[0]] = ':'.join(header[1:]).strip()
+
+            else:
+                url  = self.args.url
 
             data     = f"UserName={user}&Password={password}&AuthMethod=FormsAuthentication"
             response = self._send_request(requests.post,
                                           url,
                                           data=data,
-                                          headers=headers)
+                                          headers=custom_headers)
 
             r_status = response.status_code
 

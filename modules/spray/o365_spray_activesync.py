@@ -106,8 +106,19 @@ class OmniModule(object):
             # Build user:password var for reuse with spacing
             creds = f"{user}:{password}"
 
+            # Handle the --proxy-url flag
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        custom_headers[header[0]] = ':'.join(header[1:]).strip()
+
+            else:
+                url  = "https://outlook.office365.com/Microsoft-Server-ActiveSync"
+
             auth     = HTTPBasicAuth(user, password)
-            url      = "https://outlook.office365.com/Microsoft-Server-ActiveSync"
             response = self._send_request(requests.options,
                                           url,
                                           auth=auth,

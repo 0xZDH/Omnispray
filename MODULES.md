@@ -112,7 +112,8 @@ All modules can be found in the [modules/](modules/) directory. They are broken 
   <tr>
     <td> <b>Technique</b> </td>
     <td>
-      Confirm the HTTP response status code is '302', '401', or '403' when requesting <a href="#">https://[TENANT]-my.sharepoint.com/personal/[USER]_[DOMAIN]_[TLD]/_layouts/15/onedrive.aspx</a> - filling in the specific information within the URL via the username/email and target domain (via --domain).
+      Confirm the HTTP response status code is '302', '401', or '403' when requesting <a href="#">https://[TENANT]-my.sharepoint.com/personal/[USER]_[DOMAIN]_[TLD]/_layouts/15/onedrive.aspx</a> - filling in the specific information within the URL via the username/email and target domain (via --domain).<br /><br />
+      * <b>This module currently does not support the --proxy-url flag</b>
     </td>
   </tr>
   <tr>

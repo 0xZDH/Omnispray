@@ -81,7 +81,8 @@ class OmniModule(object):
             logging.error("Missing module arguments: -d/--domain")
             return False
 
-        if not self.args.url:
+        # If --url not provided, check if --proxy-url was provided
+        if not self.args.url and not self.args.proxy_url:
             logging.error("Missing module arguments: --url")
             return False
 
@@ -108,20 +109,34 @@ class OmniModule(object):
             user = user.split('@')[0]  # Remove email portion if present
             user = f"{self.args.domain}\\{user}"  # Add domain
 
-            url  = self.args.url
-
-            # Ensure the custom URL provided by the user includes the
-            # ActiveSync path
-            if "Microsoft-Server-ActiveSync" not in url:
-                url = url.rstrip('/') + "/Microsoft-Server-ActiveSync"
-
             # Build user:password var for reuse with spacing
             creds = f"{user}:{password}"
+
+            # Build custom headers in case we need to handle --proxy-headers
+            custom_headers = HTTP_HEADERS
+
+            # Handle the --proxy-url flag
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        custom_headers[header[0]] = ':'.join(header[1:]).strip()
+
+            else:
+                url = self.args.url
+
+                # Ensure the custom URL provided by the user includes the
+                # ActiveSync path
+                if "Microsoft-Server-ActiveSync" not in url:
+                    url = url.rstrip('/') + "/Microsoft-Server-ActiveSync"
 
             auth     = HTTPBasicAuth(user, password)
             response = self._send_request(requests.get,
                                           url,
-                                          auth=auth)
+                                          auth=auth,
+                                          headers=custom_headers)
 
             # Based on testing, 500 and 505 appear to be valid credential response
             # codes. So, for the time being, accept any non-401 response code as

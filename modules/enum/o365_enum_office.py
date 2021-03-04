@@ -106,7 +106,18 @@ class OmniModule(object):
             data = self.office_data
             data['username'] = user
 
-            url      = "https://login.microsoftonline.com/common/GetCredentialType?mkt=en-US"
+            # Handle the --proxy-url flag
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        self.office_headers[header[0]] = ':'.join(header[1:]).strip()
+
+            else:
+                url  = "https://login.microsoftonline.com/common/GetCredentialType?mkt=en-US"
+
             response = self._send_request(requests.post,
                                           url,
                                           json=data,
