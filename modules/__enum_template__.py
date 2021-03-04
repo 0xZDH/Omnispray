@@ -20,7 +20,7 @@ from core.colors import text_colors
 from core.defaults import *
 from requests.auth import HTTPBasicAuth  # TODO: If needed
 
-class ASModule(object):
+class OmniModule(object):
 
     # Counter for successful results of each task
     successful_results = 0
@@ -109,6 +109,9 @@ class ASModule(object):
             # TODO: This is the 'core' function of the module that will handle the
             #       logic for the spray task being performed.
 
+            # Write the tested user in its original format
+            self.tested_file.write(f"{user}")
+
             # TODO: If the domain is required for setting users via DOMAIN\user or
             #       any other reason, validate the domain was provided via the
             #       `prechecks` function.
@@ -121,9 +124,6 @@ class ASModule(object):
             elif not check_email(user):
                 logging.error(f"Invalid user: {user}")
                 return
-
-            # Write the tested user
-            self.tested_file.write(f"{user}")
 
             # TODO: Set the final target URL here and define any params like email
             #       via: {EMAIL} within the string defitiniton

@@ -89,13 +89,6 @@ def exec_reset_wait(wait, msg="spray"):
         time.sleep(1)
     sys.stdout.write('\n\n')
 
-def write_data(data, file_):
-    ''' Given a file handle, write data line by line '''
-    if len(data) > 0:
-        if type(data) == dict: data = ['%s:%s' % (k, v) for k, v in data.items()]
-        for item in data:
-            file_.write(f"{item}\n")
-
 def build_email(user, domain):
     ''' Based on a provided domain, force the email structure of a user '''
     if '@' in user:

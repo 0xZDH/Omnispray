@@ -15,10 +15,10 @@ from core.utils import *
 from core.colors import text_colors
 from core.defaults import *
 
-class ASModule(object):
+class OmniModule(object):
 
-    # Storage for successful results of each task
-    successful_results = []
+    # Counter for successful results of each task
+    successful_results = 0
 
     def __init__(self, *args, **kwargs):
         self.type     = "enum"
@@ -31,15 +31,16 @@ class ASModule(object):
         self.proxies  = None if not self.args.proxy else {
             "http": self.args.proxy, "https": self.args.proxy
         }
-        # Open file handles for logging and writing test cases
-        self.log_file = ThreadWriter(LOG_FILE, kwargs['log_dir'])
+        # Open file handles for writing test/success cases
+        self.tested_file  = ThreadWriter(ENUM_TESTED, kwargs['log_dir'])
+        self.success_file = ThreadWriter(ENUM_FILE, kwargs['log_dir'])
 
     def shutdown(self, key=False):
         ''' Perform a shutdown and clean up of the asynchronous handler '''
         print()  # Print empty line
         if key:
             logging.warning("CTRL-C caught...")
-        logging.info(f"Writing results to: '{self.out_dir}'")
+        logging.info(f"Results can be found in: '{self.out_dir}'")
 
         # https://stackoverflow.com/a/48351410
         # https://gist.github.com/yeraydiazdiaz/b8c059c6dcfaf3255c65806de39175a7
@@ -49,13 +50,12 @@ class ASModule(object):
         atexit.unregister(concurrent.futures.thread._python_exit)
         self.executor.shutdown = lambda wait:None
 
-        # Write the successful results
-        logging.info(f"Valid user accounts: {len(self.successful_results)}")
-        with open(f"{self.out_dir}{ENUM_FILE}", 'a') as f:
-            write_data(self.successful_results, f)
+        # Let the user know the number of valid users identified
+        logging.info(f"Valid user accounts: {self.successful_results}")
 
         # Close the open file handles
-        self.log_file.close()
+        self.tested_file.close()
+        self.success_file.close()
 
     async def run(self, users, password='password'):
         ''' Asyncronously execute task(s) '''
@@ -93,6 +93,9 @@ class ASModule(object):
                 https://github.com/nyxgeek/onedrive_user_enum/blob/master/onedrive_enum.py
                 https://www.trustedsec.com/blog/achieving-passive-user-enumeration-with-onedrive/ '''
 
+            # Write the tested user in its original format
+            self.tested_file.write(f"{user}")
+
             # Remove email format from user if present
             user = user.split('@')[0]
 
@@ -115,7 +118,8 @@ class ASModule(object):
             # It appears that valid browser User-Agents will return a 302 redirect
             # instead of 401/403 on valid accounts
             if r_status in [302, 401, 403]:
-                self.successful_results.append(user)
+                self.successful_results += 1
+                self.success_file.write(f"{user}")
                 logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
 
             elif r_status == 404:

@@ -279,9 +279,9 @@ if __name__ == "__main__":
 
     # If the module exists, attempt to import
     try:
-        module_import = __import__(f"modules.{args.type}.{args.module}", fromlist=['ASModule'])
+        module_import = __import__(f"modules.{args.type}.{args.module}", fromlist=['OmniModule'])
     except ModuleNotFoundError:
-        logging.error(f"Module, modules.{args.type}.{args.module}, failed to import 'ASModule'.")
+        logging.error(f"Module, modules.{args.type}.{args.module}, failed to import 'OmniModule'.")
         sys.exit(1)
 
     # - Begin building the framework
@@ -314,7 +314,7 @@ if __name__ == "__main__":
     # Build the module parameters and initialize the module class
     kwargs = { 'loop': loop, 'args': args, 'log_dir': LOG_DIR,
                'out_dir': OUT_DIR }
-    module = module_import.ASModule(**kwargs)
+    module = module_import.OmniModule(**kwargs)
 
     # If the module has prechecks, run them and exit if any
     # prechecks fail
