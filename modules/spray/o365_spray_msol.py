@@ -39,8 +39,8 @@ class OmniModule(object):
         self.locked_count = 0
         self.locked_limit = 5
         # Open file handles for writing test/success cases
-        self.tested_file  = ThreadWriter(SPRAY_TESTED, kwargs['log_dir'])
-        self.success_file = ThreadWriter(SPRAY_FILE, kwargs['log_dir'])
+        self.tested_file  = ThreadWriter(SPRAY_TESTED, self.out_dir)
+        self.success_file = ThreadWriter(SPRAY_FILE, self.out_dir)
 
     def shutdown(self, key=False):
         ''' Perform a shutdown and clean up of the asynchronous handler '''
