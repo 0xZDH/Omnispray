@@ -139,6 +139,11 @@ class ASModule(object):
             #       function.
             url = self.args.url
 
+            # TODO: If the --proxy-url flag is specified, use that instead of the
+            #       specified URL to pass all traffic through.
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
             # TODO: Define a custom set of headers if the request requires specific
             #       data to be passed via request headers, or set/add headers to the
             #       default HTTP headers.

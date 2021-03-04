@@ -74,17 +74,17 @@ def get_list_from_file(file_):
         _list = [line.strip() for line in f if line.strip() not in [None, ""]]
     return _list
 
-def lockout_reset_wait(lockout):
-    ''' Perform a lockout reset timer - prettified '''
+def exec_reset_wait(wait, msg="spray"):
+    ''' Perform a reset timer - prettified '''
     # From: https://github.com/byt3bl33d3r/SprayingToolkit/blob/master/core/utils/time.py
     delay = timedelta(
         hours=0,
-        minutes=lockout,
+        minutes=wait,
         seconds=0
     )
     sys.stdout.write('\n\n')
     for remaining in range(int(delay.total_seconds()), 0, -1):
-        sys.stdout.write(f"\r[*] Next spray in: {timedelta(seconds=remaining - 1)}")
+        sys.stdout.write(f"\r[*] Next {msg} in: {timedelta(seconds=remaining - 1)}")
         sys.stdout.flush()
         time.sleep(1)
     sys.stdout.write('\n\n')
