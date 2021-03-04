@@ -1,11 +1,21 @@
 #!/usr/bin/env python3
 
+from datetime import datetime
+
 # Default values that can be leveraged by modules
+
+# Get the current time in YYMMDDHHMM format to append
+# to file names to keep each run distinct
+F_TIME = datetime.now().strftime("%y%m%d%H%M")
 
 # Log and output files
 LOG_FILE   = "raw.log"
-ENUM_FILE  = "successful_enum_results.txt"
-SPRAY_FILE = "successful_spray_results.txt"
+ENUM_FILE  = "enum_successful_results.{}.txt".format(F_TIME)
+SPRAY_FILE = "spray_successful_results.{}.txt".format(F_TIME)
+
+# Tested files
+ENUM_TESTED  = "enum_tested.{}.txt".format(F_TIME)
+SPRAY_TESTED = "spray_tested.{}.txt".format(F_TIME)
 
 # Deafult HTTP Headers
 HTTP_HEADERS = {

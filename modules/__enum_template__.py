@@ -18,11 +18,12 @@ from functools import partial
 from core.utils import *
 from core.colors import text_colors
 from core.defaults import *
+from requests.auth import HTTPBasicAuth  # TODO: If needed
 
 class ASModule(object):
 
-    # Storage for successful results of each task
-    successful_results = []
+    # Counter for successful results of each task
+    successful_results = 0
 
     def __init__(self, *args, **kwargs):
         self.type     = "enum"
@@ -35,15 +36,17 @@ class ASModule(object):
         self.proxies  = None if not self.args.proxy else {
             "http": self.args.proxy, "https": self.args.proxy
         }
-        # Open file handles for logging and writing test cases
-        self.log_file = ThreadWriter(LOG_FILE, kwargs['log_dir'])
+        # Open file handles for logging and writing test/success cases
+        self.log_file     = ThreadWriter(LOG_FILE, kwargs['log_dir'])
+        self.tested_file  = ThreadWriter(ENUM_TESTED, kwargs['log_dir'])
+        self.success_file = ThreadWriter(ENUM_FILE, kwargs['log_dir'])
 
     def shutdown(self, key=False):
         ''' Perform a shutdown and clean up of the asynchronous handler '''
         print()  # Print empty line
         if key:
             logging.warning("CTRL-C caught...")
-        logging.info(f"Writing results to: '{self.out_dir}'")
+        logging.info(f"Results can be found in: '{self.out_dir}'")
 
         # https://stackoverflow.com/a/48351410
         # https://gist.github.com/yeraydiazdiaz/b8c059c6dcfaf3255c65806de39175a7
@@ -53,13 +56,13 @@ class ASModule(object):
         atexit.unregister(concurrent.futures.thread._python_exit)
         self.executor.shutdown = lambda wait:None
 
-        # Write the successful results
-        logging.info(f"Valid user accounts: {len(self.successful_results)}")
-        with open(f"{self.out_dir}{ENUM_FILE}", 'a') as f:
-            write_data(self.successful_results, f)
+        # Let the user know the number of valid users identified
+        logging.info(f"Valid user accounts: {self.successful_results}")
 
         # Close the open file handles
         self.log_file.close()
+        self.tested_file.close()
+        self.success_file.close()
 
     async def run(self, users, password='password'):
         ''' Asyncronously execute task(s) '''
@@ -118,6 +121,9 @@ class ASModule(object):
             elif not check_email(user):
                 logging.error(f"Invalid user: {user}")
                 return
+
+            # Write the tested user
+            self.tested_file.write(f"{user}")
 
             # TODO: Set the final target URL here and define any params like email
             #       via: {EMAIL} within the string defitiniton
@@ -191,7 +197,8 @@ class ASModule(object):
             #       Delete this if not using.
             r_status = response.status_code
             if r_status == 200:
-                self.successful_results.append(f"{user}")
+                self.successful_results += 1
+                self.success_file.write(f"{user}")
                 logging.info("VALID")
             else:
                 logging.info("INVALID")
@@ -202,7 +209,8 @@ class ASModule(object):
             #       on the response headers.
             r_headers = response.headers
             if "target_header" in (h.lower() for h in r_headers.keys()):
-                self.successful_results.append(f"{user}")
+                self.successful_results += 1
+                self.success_file.write(f"{user}")
                 logging.info("VALID")
             else:
                 logging.info("INVALID")
@@ -213,7 +221,8 @@ class ASModule(object):
             #       on the response body.
             r_body = response.content
             if "target_value" in r_body:
-                self.successful_results.append(f"{user}")
+                self.successful_results += 1
+                self.success_file.write(f"{user}")
                 logging.info("VALID")
             else:
                 logging.info("INVALID")
