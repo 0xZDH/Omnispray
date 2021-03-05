@@ -115,7 +115,8 @@ if __name__ == "__main__":
         type=int,
         default=1,
         help="When password spraying, number of password attempts " +
-             "to run before resetting lockout timer. Default: 1"
+             "to run before resetting lockout timer. " +
+             "Default: 1 password per spray rotation"
     )
     parser.add_argument(
         "-l",
@@ -148,7 +149,7 @@ if __name__ == "__main__":
         "--timeout",
         type=int,
         default=25,
-        help="Request timeout in seconds. Default: 25"
+        help="Request timeout in seconds. Default: 25 seconds"
     )
     parser.add_argument(
         "--proxy",
@@ -175,14 +176,14 @@ if __name__ == "__main__":
         default=0.250,
         help="Sleep (jitter) time before each task is executed in seconds. " +
              "If set to '-1', a random pause, between 0.250 and 0.750, will " +
-             "occur before each task execution. Default: 0.250"
+             "occur before each task execution. Default: 0.250 seconds"
     )
     parser.add_argument(
         "--rate",
         type=int,
         default=10,
         help="Number of concurrent connections during enumeration/spraying. " +
-             "Default: 10"
+             "Default: 10 threads"
     )
     parser.add_argument(
         "--version",
