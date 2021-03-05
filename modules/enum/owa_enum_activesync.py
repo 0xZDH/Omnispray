@@ -86,11 +86,6 @@ class OmniModule(object):
             logging.error("Missing module arguments: --url")
             return False
 
-        # Ensure the custom URL provided by the user includes the
-        # ActiveSync path
-        if self.args.url and "Microsoft-Server-ActiveSync" not in self.args.url:
-            self.args.url = self.args.url.rstrip('/') + "/Microsoft-Server-ActiveSync"
-
         # Once prechecks have passed, identify the baseline response time
         self.base_time  = self._base_response_time()
         # Define the threshold
@@ -128,10 +123,14 @@ class OmniModule(object):
                 if self.args.proxy_headers:
                     for header in self.args.proxy_headers:
                         header = header.split(':')
-                        custom_headers[header[0]] = ':'.join(header[1:]).strip()
+                        custom_headers[header[0].strip()] = ':'.join(header[1:]).strip()
 
             else:
                 url  = self.args.url
+
+            # Ensure the URL provided by the user includes the required path
+            if "/Microsoft-Server-ActiveSync" not in url:
+                url  = url.rstrip('/') + "/Microsoft-Server-ActiveSync"
 
             auth     = HTTPBasicAuth(user, password)
             response = self._send_request(requests.get,

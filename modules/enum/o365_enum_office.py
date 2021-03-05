@@ -110,10 +110,15 @@ class OmniModule(object):
             if self.args.proxy_url:
                 url = self.args.proxy_url
 
+                # Ensure the custom proxy URL provided by the user includes the
+                # required path
+                if "/common/GetCredentialType?mkt=en-US" not in url:
+                    url = url.rstrip('/') + "/common/GetCredentialType?mkt=en-US"
+
                 if self.args.proxy_headers:
                     for header in self.args.proxy_headers:
                         header = header.split(':')
-                        self.office_headers[header[0]] = ':'.join(header[1:]).strip()
+                        self.office_headers[header[0].strip()] = ':'.join(header[1:]).strip()
 
             else:
                 url  = "https://login.microsoftonline.com/common/GetCredentialType?mkt=en-US"

@@ -145,6 +145,11 @@ class OmniModule(object):
             if self.args.proxy_url:
                 url = self.args.proxy_url
 
+            # TODO: If a non-standard URL or proxy-url, ensure the required path and
+            #       elements are properly appended if not present.
+            if "/path?param=value" not in url:
+                url  = url.rstrip('/') + "/path?param=value"
+
             # TODO: Define a custom set of headers if the request requires specific
             #       data to be passed via request headers, or set/add headers to the
             #       default HTTP headers.
@@ -161,7 +166,7 @@ class OmniModule(object):
             if self.args.proxy_url and self.args.proxy_headers:
                 for header in self.args.proxy_headers:
                     header = header.split(':')
-                    custom_headers[header[0]] = ':'.join(header[1:]).strip()
+                    custom_headers[header[0].strip()] = ':'.join(header[1:]).strip()
 
             # TODO: Build POST data, if applicable, based on direct or JSON objects.
             #       Choose one or the other of the following objects and set them

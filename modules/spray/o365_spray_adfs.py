@@ -115,13 +115,15 @@ class OmniModule(object):
             creds = f"{user}:{password}"
 
             # Handle the --proxy-url flag
+            # All URL paths and parameters required are assumed to be appended by the
+            # user via the --url or --proxy-url flag.
             if self.args.proxy_url:
                 url = self.args.proxy_url
 
                 if self.args.proxy_headers:
                     for header in self.args.proxy_headers:
                         header = header.split(':')
-                        custom_headers[header[0]] = ':'.join(header[1:]).strip()
+                        custom_headers[header[0].strip()] = ':'.join(header[1:]).strip()
 
             else:
                 url  = self.args.url
