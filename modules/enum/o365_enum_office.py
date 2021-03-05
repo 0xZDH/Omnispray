@@ -17,10 +17,10 @@ from core.utils import *
 from core.colors import text_colors
 from core.defaults import *
 
-class ASModule(object):
+class OmniModule(object):
 
-    # Storage for successful results of each task
-    successful_results = []
+    # Counter for successful results of each task
+    successful_results = 0
 
     def __init__(self, *args, **kwargs):
         self.type     = "enum"
@@ -33,17 +33,16 @@ class ASModule(object):
         self.proxies  = None if not self.args.proxy else {
             "http": self.args.proxy, "https": self.args.proxy
         }
-        # Open file handles for logging and writing test cases
-        self.log_file = ThreadWriter(LOG_FILE, kwargs['log_dir'])
-        # Build headers and data
-        self._pre_office()
+        # Open file handles for writing test/success cases
+        self.tested_file  = ThreadWriter(ENUM_TESTED, self.out_dir)
+        self.success_file = ThreadWriter(ENUM_FILE, self.out_dir)
 
     def shutdown(self, key=False):
         ''' Perform a shutdown and clean up of the asynchronous handler '''
         print()  # Print empty line
         if key:
             logging.warning("CTRL-C caught...")
-        logging.info(f"Writing results to: '{self.out_dir}'")
+        logging.info(f"Results can be found in: '{self.out_dir}'")
 
         # https://stackoverflow.com/a/48351410
         # https://gist.github.com/yeraydiazdiaz/b8c059c6dcfaf3255c65806de39175a7
@@ -53,13 +52,12 @@ class ASModule(object):
         atexit.unregister(concurrent.futures.thread._python_exit)
         self.executor.shutdown = lambda wait:None
 
-        # Write the successful results
-        logging.info(f"Valid user accounts: {len(self.successful_results)}")
-        with open(f"{self.out_dir}{ENUM_FILE}", 'a') as f:
-            write_data(self.successful_results, f)
+        # Let the user know the number of valid users identified
+        logging.info(f"Valid user accounts: {self.successful_results}")
 
         # Close the open file handles
-        self.log_file.close()
+        self.tested_file.close()
+        self.success_file.close()
 
     async def run(self, users, password='password'):
         ''' Asyncronously execute task(s) '''
@@ -74,6 +72,12 @@ class ASModule(object):
         if blocking_tasks:
             await asyncio.wait(blocking_tasks)
 
+    def prechecks(self):
+        ''' Perform module prechecks '''
+        # Build headers and data
+        self._pre_office()
+        return True
+
     def _execute(self, user, password):
         ''' Perform an asynchronous task '''
         try:
@@ -87,6 +91,9 @@ class ASModule(object):
             ''' Enumerate users on Microsoft using Office.com
                 https://github.com/gremwell/o365enum/blob/master/o365enum.py '''
 
+            # Write the tested user in its original format
+            self.tested_file.write(f"{user}")
+
             # Build/validate email
             if self.args.domain:
                 user = build_email(user, self.args.domain)
@@ -99,7 +106,23 @@ class ASModule(object):
             data = self.office_data
             data['username'] = user
 
-            url      = "https://login.microsoftonline.com/common/GetCredentialType?mkt=en-US"
+            # Handle the --proxy-url flag
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                # Ensure the custom proxy URL provided by the user includes the
+                # required path
+                if "/common/GetCredentialType?mkt=en-US" not in url:
+                    url = url.rstrip('/') + "/common/GetCredentialType?mkt=en-US"
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        self.office_headers[header[0].strip()] = ':'.join(header[1:]).strip()
+
+            else:
+                url  = "https://login.microsoftonline.com/common/GetCredentialType?mkt=en-US"
+
             response = self._send_request(requests.post,
                                           url,
                                           json=data,
@@ -114,11 +137,13 @@ class ASModule(object):
                 # https://www.redsiege.com/blog/2020/03/user-enumeration-part-2-microsoft-office-365/
                 # https://warroom.rsmus.com/enumerating-emails-via-office-com/
                 if int(r_body['IfExistsResult']) in [0, 6]:
-                    self.successful_results.append(user)
+                    self.successful_results += 1
+                    self.success_file.write(f"{user}")
                     logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
 
                 elif int(body['IfExistsResult']) == 5:
-                    self.successful_results.append(user)
+                    self.successful_results += 1
+                    self.success_file.write(f"{user}")
                     logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
                     logging.debug(f"{user}: Different Identity Provider")
 

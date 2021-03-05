@@ -15,10 +15,10 @@ from core.colors import text_colors
 from core.defaults import *
 from requests.auth import HTTPBasicAuth
 
-class ASModule(object):
+class OmniModule(object):
 
-    # Storage for successful results of each task
-    successful_results = []
+    # Counter for successful results of each task
+    successful_results = 0
 
     def __init__(self, *args, **kwargs):
         self.type     = "enum"
@@ -31,15 +31,16 @@ class ASModule(object):
         self.proxies  = None if not self.args.proxy else {
             "http": self.args.proxy, "https": self.args.proxy
         }
-        # Open file handles for logging and writing test cases
-        self.log_file = ThreadWriter(LOG_FILE, kwargs['log_dir'])
+        # Open file handles for writing test/success cases
+        self.tested_file  = ThreadWriter(ENUM_TESTED, self.out_dir)
+        self.success_file = ThreadWriter(ENUM_FILE, self.out_dir)
 
     def shutdown(self, key=False):
         ''' Perform a shutdown and clean up of the asynchronous handler '''
         print()  # Print empty line
         if key:
             logging.warning("CTRL-C caught...")
-        logging.info(f"Writing results to: '{self.out_dir}'")
+        logging.info(f"Results can be found in: '{self.out_dir}'")
 
         # https://stackoverflow.com/a/48351410
         # https://gist.github.com/yeraydiazdiaz/b8c059c6dcfaf3255c65806de39175a7
@@ -49,13 +50,12 @@ class ASModule(object):
         atexit.unregister(concurrent.futures.thread._python_exit)
         self.executor.shutdown = lambda wait:None
 
-        # Write the successful results
-        logging.info(f"Valid user accounts: {len(self.successful_results)}")
-        with open(f"{self.out_dir}{ENUM_FILE}", 'a') as f:
-            write_data(self.successful_results, f)
+        # Let the user know the number of valid users identified
+        logging.info(f"Valid user accounts: {self.successful_results}")
 
         # Close the open file handles
-        self.log_file.close()
+        self.tested_file.close()
+        self.success_file.close()
 
     async def run(self, users, password='password'):
         ''' Asyncronously execute task(s) '''
@@ -83,6 +83,9 @@ class ASModule(object):
             ''' Enumerate users on Microsoft using Microsoft Server ActiveSync
                 Original enumeration via: https://bitbucket.org/grimhacker/office365userenum/ '''
 
+            # Write the tested user in its original format
+            self.tested_file.write(f"{user}")
+
             # Add special header for ActiveSync
             custom_headers = HTTP_HEADERS
             custom_headers["MS-ASProtocolVersion"] = "14.0"
@@ -95,9 +98,25 @@ class ASModule(object):
                 logging.error(f"Invalid user: {user}")
                 return
 
+            # Handle the --proxy-url flag
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                # Ensure the custom proxy URL provided by the user includes the
+                # required path
+                if "/Microsoft-Server-ActiveSync" not in url:
+                    url = url.rstrip('/') + "/Microsoft-Server-ActiveSync"
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        custom_headers[header[0].strip()] = ':'.join(header[1:]).strip()
+
+            else:
+                url   = "https://outlook.office365.com/Microsoft-Server-ActiveSync"
+
             # Perform OPTIONS request
             auth      = HTTPBasicAuth(user, password)
-            url       = "https://outlook.office365.com/Microsoft-Server-ActiveSync"
             response  = self._send_request(requests.options,
                                            url,
                                            auth=auth,
@@ -108,14 +127,16 @@ class ASModule(object):
 
             # Validate HTTP response status
             if r_status == 200:
-                self.successful_results.append(user)
+                self.successful_results += 1
+                self.success_file.write(f"{user}")
                 logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
 
             # Note: After the new MS updates, it appears that invalid users return a 403 Forbidden while valid users
             #       appear to respond with 401 Unauthorized with a WWW-Authenticate response header that indicates
             #       Basic auth negotiation was started
             elif r_status == 401 and "WWW-Authenticate" in r_headers.keys():
-                self.successful_results.append(user)
+                self.successful_results += 1
+                self.success_file.write(f"{user}")
                 logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
 
             else:

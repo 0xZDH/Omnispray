@@ -14,7 +14,7 @@ from pathlib import Path
 from core.utils import *
 
 __title__   = "Omnispray | Modular Enumeration and Password Spraying Framework"
-__version__ = "0.1.1"
+__version__ = "0.1.2"
 
 def signal_handler(signal, frame):
     ''' Signal handler for async routines.
@@ -114,15 +114,34 @@ if __name__ == "__main__":
         "--count",
         type=int,
         default=1,
-        help="Number of password attempts to run before resetting " +
-             "lockout timer. Default: 1"
+        help="When password spraying, number of password attempts " +
+             "to run before resetting lockout timer. " +
+             "Default: 1 password per spray rotation"
     )
     parser.add_argument(
         "-l",
         "--lockout",
         type=float,
-        help="Lockout policy reset time (in minutes). Default: 15 minutes",
-        default=15.0
+        default=15.0,
+        help="Password spraying lockout policy reset time (in minutes). " +
+             "Default: 15 minutes"
+    )
+
+    # Enumeration handling
+    parser.add_argument(
+        "-s",
+        "--split",
+        type=int,
+        help="When enumerating, number of usernames to group by " +
+             "during execution"
+    )
+    parser.add_argument(
+        "-w",
+        "--wait",
+        type=float,
+        default=5.0,
+        help="If splitting user enumeration via --split, time to wait " +
+             "between group runs (in minutes). Default: 5 minutes"
     )
 
     # HTTP request handlers
@@ -130,12 +149,24 @@ if __name__ == "__main__":
         "--timeout",
         type=int,
         default=25,
-        help="Request timeout in seconds. Default: 25"
+        help="Request timeout in seconds. Default: 25 seconds"
     )
     parser.add_argument(
         "--proxy",
         type=str,
         help="Proxy to pass traffic through (e.g. http://127.0.0.1:8080)."
+    )
+    parser.add_argument(
+        "--proxy-url",
+        type=str,
+        help="URL of proxy to request instead of the module URL. This is to " +
+             "be used with tools such as FireProx."
+    )
+    parser.add_argument(
+        "--proxy-headers",
+        type=str,
+        nargs='+',
+        help="Custom headers to use when a --proxy-url has been provided"
     )
 
     # Generic tool flags
@@ -145,14 +176,14 @@ if __name__ == "__main__":
         default=0.250,
         help="Sleep (jitter) time before each task is executed in seconds. " +
              "If set to '-1', a random pause, between 0.250 and 0.750, will " +
-             "occur before each task execution. Default: 0.250"
+             "occur before each task execution. Default: 0.250 seconds"
     )
     parser.add_argument(
         "--rate",
         type=int,
         default=10,
         help="Number of concurrent connections during enumeration/spraying. " +
-             "Default: 10"
+             "Default: 10 threads"
     )
     parser.add_argument(
         "--version",
@@ -249,9 +280,9 @@ if __name__ == "__main__":
 
     # If the module exists, attempt to import
     try:
-        module_import = __import__(f"modules.{args.type}.{args.module}", fromlist=['ASModule'])
+        module_import = __import__(f"modules.{args.type}.{args.module}", fromlist=['OmniModule'])
     except ModuleNotFoundError:
-        logging.error(f"Module, modules.{args.type}.{args.module}, failed to import 'ASModule'.")
+        logging.error(f"Module, modules.{args.type}.{args.module}, failed to import 'OmniModule'.")
         sys.exit(1)
 
     # - Begin building the framework
@@ -284,7 +315,7 @@ if __name__ == "__main__":
     # Build the module parameters and initialize the module class
     kwargs = { 'loop': loop, 'args': args, 'log_dir': LOG_DIR,
                'out_dir': OUT_DIR }
-    module = module_import.ASModule(**kwargs)
+    module = module_import.OmniModule(**kwargs)
 
     # If the module has prechecks, run them and exit if any
     # prechecks fail
@@ -309,6 +340,10 @@ if __name__ == "__main__":
 
     # - Begin enumeration/spraying
 
+    # Current list of file handle attribute names that are
+    # used by the included modules and module templates
+    file_handles = [ "log_file", "tested_file", "success_file" ]
+
     try:
 
         # Handle user enumeration module
@@ -323,8 +358,26 @@ if __name__ == "__main__":
             else:
                 password = 'password'
 
-            # Run the loop
-            loop.run_until_complete(module.run(users, password))
+            # If the user specified to split the enumeration, run chunks of users
+            # at a time
+            if args.split:
+                for user_chunk in get_chunks_from_list(users, args.split):
+                    logging.info(f"Enumerating {len(user_chunk)} user(s)")
+                    loop.run_until_complete(module.run(user_chunk, password))
+
+                    # Flush the open files after each rotation
+                    for f in file_handles:
+                        f_handle = getattr(module, f, None)
+                        if f_handle:
+                            f_handle.flush()
+
+                    # Check if we reached the last user chunk
+                    if not check_last_chunk(user_chunk, users):
+                        exec_reset_wait(args.wait, "enum")
+
+            else:
+                # Run a single loop
+                loop.run_until_complete(module.run(users, password))
 
         # Handle password spray module
         elif module.type == "spray":
@@ -356,13 +409,19 @@ if __name__ == "__main__":
             # Based on: https://github.com/0xZDH/o365spray
             for password_chunk in get_chunks_from_list(passwords, args.count):
                 logging.info("Password spraying the following passwords: [%s]" % (
-                    ", ".join("'%s'" % password for password in password_chunk))
+                    ", ".join(f"'{password}'" for password in password_chunk))
                 )
 
                 # Loop through each password individually so it's easier to keep
                 # track and avoid duplicate scans once a removal condition is hit
                 for password in password_chunk:
                     loop.run_until_complete(module.run(password))
+
+                    # Flush the open files after each rotation
+                    for f in file_handles:
+                        f_handle = getattr(module, f, None)
+                        if f_handle:
+                            f_handle.flush()
 
                     # If the module has a defined lockout handler, stop if we hit
                     # the threshold
@@ -377,14 +436,14 @@ if __name__ == "__main__":
                 else:
                     # Check if we reached the last password chunk
                     if not check_last_chunk(password_chunk, passwords):
-                        lockout_reset_wait(args.lockout)
+                        exec_reset_wait(args.lockout, "spray")
                     continue
 
                 # Only executed if the inner loop DID break
                 break
 
-            else:
-                logging.error(f"Invalid module type: {module.type}")
+        else:
+            logging.error(f"Invalid module type: {module.type}")
 
         # Call the module's shutdown function to exit cleanly. Otherwise,
         # it can be triggered via a CTRL-C signal.

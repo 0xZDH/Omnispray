@@ -16,10 +16,10 @@ from core.colors import text_colors
 from core.defaults import *
 from requests.auth import HTTPBasicAuth
 
-class ASModule(object):
+class OmniModule(object):
 
-    # Storage for successful results of each task
-    successful_results = []
+    # Counter for successful results of each task
+    successful_results = 0
 
     def __init__(self, *args, **kwargs):
         self.type     = "enum"
@@ -32,18 +32,19 @@ class ASModule(object):
         self.proxies  = None if not self.args.proxy else {
             "http": self.args.proxy, "https": self.args.proxy
         }
-        # Open file handles for logging and writing test cases
-        self.log_file = ThreadWriter(LOG_FILE, kwargs['log_dir'])
         # Initialize the class var, but don't set until prechecks
         # are complete
         self.base_time = 0
+        # Open file handles for writing test/success cases
+        self.tested_file  = ThreadWriter(ENUM_TESTED, self.out_dir)
+        self.success_file = ThreadWriter(ENUM_FILE, self.out_dir)
 
     def shutdown(self, key=False):
         ''' Perform a shutdown and clean up of the asynchronous handler '''
         print()  # Print empty line
         if key:
             logging.warning("CTRL-C caught...")
-        logging.info(f"Writing results to: '{self.out_dir}'")
+        logging.info(f"Results can be found in: '{self.out_dir}'")
 
         # https://stackoverflow.com/a/48351410
         # https://gist.github.com/yeraydiazdiaz/b8c059c6dcfaf3255c65806de39175a7
@@ -53,13 +54,12 @@ class ASModule(object):
         atexit.unregister(concurrent.futures.thread._python_exit)
         self.executor.shutdown = lambda wait:None
 
-        # Write the successful results
-        logging.info(f"Valid user accounts: {len(self.successful_results)}")
-        with open(f"{self.out_dir}{ENUM_FILE}", 'a') as f:
-            write_data(self.successful_results, f)
+        # Let the user know the number of valid users identified
+        logging.info(f"Valid user accounts: {self.successful_results}")
 
         # Close the open file handles
-        self.log_file.close()
+        self.tested_file.close()
+        self.success_file.close()
 
     async def run(self, users, password='password'):
         ''' Asyncronously execute task(s) '''
@@ -81,14 +81,10 @@ class ASModule(object):
             logging.error("Missing module arguments: -d/--domain")
             return False
 
-        if not self.args.url:
+        # If --url not provided, check if --proxy-url was provided
+        if not self.args.url and not self.args.proxy_url:
             logging.error("Missing module arguments: --url")
             return False
-
-        # Ensure the custom URL provided by the user includes the
-        # ActiveSync path
-        if "Microsoft-Server-ActiveSync" not in self.args.url:
-            self.args.url = self.args.url.rstrip('/') + "/Microsoft-Server-ActiveSync"
 
         # Once prechecks have passed, identify the baseline response time
         self.base_time  = self._base_response_time()
@@ -110,21 +106,43 @@ class ASModule(object):
                 https://github.com/fugawi/EASSniper
                 https://github.com/fugawi/EASSniper/blob/master/EASSniper.ps1#L1 '''
 
+            # Write the tested user in its original format
+            self.tested_file.write(f"{user}")
+
             # Transform user -> DOMAIN\user
             user = user.split('@')[0]  # Remove email portion if present
             user = f"{self.args.domain}\\{user}"  # Add domain
 
-            url      = self.args.url
+            # Build custom headers in case we need to handle --proxy-headers
+            custom_headers = HTTP_HEADERS
+
+            # Handle the --proxy-url flag
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        custom_headers[header[0].strip()] = ':'.join(header[1:]).strip()
+
+            else:
+                url  = self.args.url
+
+            # Ensure the URL provided by the user includes the required path
+            if "/Microsoft-Server-ActiveSync" not in url:
+                url  = url.rstrip('/') + "/Microsoft-Server-ActiveSync"
+
             auth     = HTTPBasicAuth(user, password)
             response = self._send_request(requests.get,
                                           url,
-                                          auth=auth)
+                                          auth=auth,
+                                          headers=custom_headers)
 
             r_time = response.elapsed.total_seconds()
             if r_time < self.base_time:
-                self.successful_results.append(user)
+                self.successful_results += 1
+                self.success_file.write(f"{user}")
                 logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
-                self.users.remove(user)
 
             else:
                 print(f"{text_colors.red}[ - ]{text_colors.reset} {user}{gen_space(user)}", end='\r')

@@ -21,6 +21,10 @@ class ThreadWriter(object):
         ''' Write data to file '''
         self.out_file.write(f"{data}\n")
 
+    def flush(self):
+        ''' Flush the file buffer '''
+        self.out_file.flush()
+
     def close(self):
         ''' Close the file handle '''
         self.out_file.close()
@@ -74,27 +78,20 @@ def get_list_from_file(file_):
         _list = [line.strip() for line in f if line.strip() not in [None, ""]]
     return _list
 
-def lockout_reset_wait(lockout):
-    ''' Perform a lockout reset timer - prettified '''
+def exec_reset_wait(wait, msg="spray"):
+    ''' Perform a reset timer - prettified '''
     # From: https://github.com/byt3bl33d3r/SprayingToolkit/blob/master/core/utils/time.py
     delay = timedelta(
         hours=0,
-        minutes=lockout,
+        minutes=wait,
         seconds=0
     )
     sys.stdout.write('\n\n')
     for remaining in range(int(delay.total_seconds()), 0, -1):
-        sys.stdout.write(f"\r[*] Next spray in: {timedelta(seconds=remaining - 1)}")
+        sys.stdout.write(f"\r[*] Next {msg} in: {timedelta(seconds=remaining - 1)}")
         sys.stdout.flush()
         time.sleep(1)
     sys.stdout.write('\n\n')
-
-def write_data(data, file_):
-    ''' Given a file handle, write data line by line '''
-    if len(data) > 0:
-        if type(data) == dict: data = ['%s:%s' % (k, v) for k, v in data.items()]
-        for item in data:
-            file_.write(f"{item}\n")
 
 def build_email(user, domain):
     ''' Based on a provided domain, force the email structure of a user '''

