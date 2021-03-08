@@ -41,7 +41,9 @@ All modules can be found in the [modules/](modules/) directory. They are broken 
 <table>
   <tr>
     <td> <b>Name</b> </td>
-    <td> o365_enum_activesync </td>
+    <td>
+      <a href="modules/enum/o365_enum_activesync.py">o365_enum_activesync</a>
+    </td>
   </tr>
   <tr>
     <td> <b>Target</b> </td>
@@ -70,7 +72,9 @@ All modules can be found in the [modules/](modules/) directory. They are broken 
 <table>
   <tr>
     <td> <b>Name</b> </td>
-    <td> o365_enum_office </td>
+    <td>
+      <a href="modules/enum/o365_enum_office.py">o365_enum_office</a>
+    </td>
   </tr>
   <tr>
     <td> <b>Target</b> </td>
@@ -99,7 +103,9 @@ All modules can be found in the [modules/](modules/) directory. They are broken 
 <table>
   <tr>
     <td> <b>Name</b> </td>
-    <td> o365_enum_onedrive </td>
+    <td>
+      <a href="modules/enum/o365_enum_onedrive.py">o365_enum_onedrive</a>
+    </td>
   </tr>
   <tr>
     <td> <b>Target</b> </td>
@@ -134,7 +140,9 @@ Provide the target domain in the form of 'domain.com'.</pre>
 <table>
   <tr>
     <td> <b>Name</b> </td>
-    <td> owa_enum_activesync </td>
+    <td>
+      <a href="modules/enum/owa_enum_activesync.py">owa_enum_activesync</a>
+    </td>
   </tr>
   <tr>
     <td> <b>Target</b> </td>
@@ -177,7 +185,9 @@ automatically append it to the provided URL.</pre>
 <table>
   <tr>
     <td> <b>Name</b> </td>
-    <td> o365_spray_activesync </td>
+    <td>
+      <a href="modules/spray/o365_spray_activesync.py">o365_spray_activesync</a>
+    </td>
   </tr>
   <tr>
     <td> <b>Target</b> </td>
@@ -205,7 +215,9 @@ automatically append it to the provided URL.</pre>
 <table>
   <tr>
     <td> <b>Name</b> </td>
-    <td> o365_spray_adfs </td>
+    <td>
+      <a href="modules/spray/o365_spray_adfs.py">o365_spray_adfs</a>
+    </td>
   </tr>
   <tr>
     <td> <b>Target</b> </td>
@@ -236,7 +248,9 @@ Provide the target ADFS URL in the form of <a href="#">https://target.com/...</a
 <table>
   <tr>
     <td> <b>Name</b> </td>
-    <td> o365_spray_msol </td>
+    <td>
+      <a href="modules/spray/o365_spray_msol.py">o365_spray_msol</a>
+    </td>
   </tr>
   <tr>
     <td> <b>Target</b> </td>
@@ -246,7 +260,7 @@ Provide the target ADFS URL in the form of <a href="#">https://target.com/...</a
     <td> <b>Reference(s)</b> </td>
     <td>
         <a href="https://github.com/dafthack/MSOLSpray">dafthack: MSOLSpray</a><br/>
-        <a href="https://gist.github.com/byt3bl33d3r/19a48fff8fdc34cc1dd1f1d2807e1b7f">byt3bl33d3r Gist</a><br/>
+        <a href="https://gist.github.com/byt3bl33d3r/19a48fff8fdc34cc1dd1f1d2807e1b7f">byt3bl33d3r Gist</a>
     </td>
   </tr>
   <tr>
@@ -269,7 +283,9 @@ Provide the target ADFS URL in the form of <a href="#">https://target.com/...</a
 <table>
   <tr>
     <td> <b>Name</b> </td>
-    <td> owa_spray_activesync </td>
+    <td>
+      <a href="modules/spray/owa_spray_activesync.py">owa_spray_activesync</a>
+    </td>
   </tr>
   <tr>
     <td> <b>Target</b> </td>
