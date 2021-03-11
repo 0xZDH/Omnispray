@@ -141,7 +141,7 @@ class OmniModule(object):
                     self.success_file.write(f"{user}")
                     logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
 
-                elif int(body['IfExistsResult']) == 5:
+                elif int(r_body['IfExistsResult']) == 5:
                     self.successful_results += 1
                     self.success_file.write(f"{user}")
                     logging.info(f"{text_colors.green}[ + ]{text_colors.reset} {user}")
