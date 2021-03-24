@@ -1,6 +1,6 @@
 # Omnispray
 
-> Omnispray | Modular Enumeration and Password Spraying Framework -- v0.1.2
+> Omnispray | Modular Enumeration and Password Spraying Framework -- v0.1.3
 
 Omnispray aims to replace tools such as [o365spray](https://github.com/0xZDH/o365spray) and provide a modular framework to expand enumeration and spraying beyond just a single target/application.
 
@@ -32,6 +32,8 @@ See [MODULES.md](MODULES.md) for information on custom module development as wel
 | --proxy       | Proxy to pass traffic through (e.g. http://127.0.0.1:8080).                                               |
 | --proxy-url   | URL of proxy to request instead of the module URL. This is to be used with tools such as FireProx.        |
 | --proxy-headers  | Custom headers to use when a --proxy-url has been provided (--proxy-headers "header: value" "header2: value" "header3: value" ...) (e.g. "X-My-X-Forwarded-For: 127.0.0.1" when using FireProx) |
+| --outdir      | Directory for results and tested files. Default: results/                                                 |
+| --logdir      | Directory for log files. Default: logs/                                                                   |
 | --pause       | Sleep (jitter) time before each task is executed in seconds. If set to '-1', a random pause, between 0.250 and 0.750, will occur before each task execution. Default: 0.250 seconds |
 | --rate        | Number of concurrent connections during enumeration/spraying. Default: 10 threads                         |
 | --version     | Print the tool version                                                                                    |

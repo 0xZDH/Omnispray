@@ -14,7 +14,7 @@ from pathlib import Path
 from core.utils import *
 
 __title__   = "Omnispray | Modular Enumeration and Password Spraying Framework"
-__version__ = "0.1.2"
+__version__ = "0.1.3"
 
 def signal_handler(signal, frame):
     ''' Signal handler for async routines.
@@ -171,6 +171,16 @@ if __name__ == "__main__":
 
     # Generic tool flags
     parser.add_argument(
+        "--outdir",
+        type=str,
+        help="Directory for results and tested files. Default: results/"
+    )
+    parser.add_argument(
+        "--logdir",
+        type=str,
+        help="Directory for log files. Default: logs/"
+    )
+    parser.add_argument(
         "--pause",
         type=float,
         default=0.250,
@@ -305,8 +315,14 @@ if __name__ == "__main__":
     signal.signal(signal.SIGTERM, signal_handler)
 
     CUR_DIR = Path(__file__).parent.absolute()
-    LOG_DIR = f"{CUR_DIR}/logs/"
-    OUT_DIR = f"{CUR_DIR}/results/"
+
+    # Handle output and log directories based on if the user provides a
+    # directory location or not
+    OUT_DIR = f"{CUR_DIR}/results/" if not args.outdir \
+                else args.outdir.rstrip('/') + '/'
+
+    LOG_DIR = f"{CUR_DIR}/logs/" if not args.logdir \
+                else args.logdir.rstrip('/') + '/'
 
     # Create log/output directories (if not already present)
     Path(LOG_DIR).mkdir(parents=True, exist_ok=True)
