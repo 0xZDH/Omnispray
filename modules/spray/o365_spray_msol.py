@@ -113,7 +113,7 @@ class OmniModule(object):
 
             # Build custom headers
             custom_headers = HTTP_HEADERS
-            custom_headers['Accept']       = 'application/json',
+            custom_headers['Accept']       = 'application/json'
             custom_headers['Content-Type'] = 'application/x-www-form-urlencoded'
 
             # Build POST data
