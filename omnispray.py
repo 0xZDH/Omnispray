@@ -14,7 +14,7 @@ from pathlib import Path
 from core.utils import *
 
 __title__   = "Omnispray | Modular Enumeration and Password Spraying Framework"
-__version__ = "0.1.3"
+__version__ = "0.1.4"
 
 def signal_handler(signal, frame):
     ''' Signal handler for async routines.
@@ -442,7 +442,7 @@ if __name__ == "__main__":
                     # If the module has a defined lockout handler, stop if we hit
                     # the threshold
                     if hasattr(module, 'locked_count'):
-                        if module.locked_count >= module.lockout_limit:
+                        if module.locked_count >= module.locked_limit:
                             logging.error("Lockout threashold reached. Exiting...")
                             break
 
