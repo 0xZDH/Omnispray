@@ -49,6 +49,14 @@ if __name__ == "__main__":
         help="Target domain for enumeration/spraying."
     )
 
+    # Tenant name to be used in case it differs from users domain
+    parser.add_argument(
+        "-tenant",
+        "--tenant",
+        type=str,
+        help="Target tenant name in case it differs with domain for enumeration/spraying."
+    )
+
     # Module type
     parser.add_argument(
         "-t",
