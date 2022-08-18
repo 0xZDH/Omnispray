@@ -101,9 +101,10 @@ class OmniModule(object):
 
             # Collect the pieces to build the One Drive URL
             domain_array = (self.args.domain.split('.'))
+            tenant_array = (self.args.tenant.split('.')) if self.args.tenant else []
 
             domain = domain_array[0]        # Collect the domain
-            tenant = domain                 # Use domain as tenant
+            tenant = tenant_array[0] if tenant_array else domain  # if tenant param exists use it instead of domain
             tld    = domain_array[-1]       # Grab the TLD
             user   = user.replace(".","_")  # Replace any `.` with `_` for use in the URL
 
