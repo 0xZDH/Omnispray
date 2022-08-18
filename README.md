@@ -16,6 +16,7 @@ See [MODULES.md](MODULES.md) for information on custom module development as wel
 |--------------|------------------------------------------------------------------------------------------------------------|
 | -m<br/>--module | Specify the module to run via the modules/ directory.                                                   |
 | -d<br/>--domain | Target domain for enumeration/spraying.                                                                 |
+| -tenant<br/>--tenant | Target tenant name in case it differs with domain for enumeration/spraying.                       |
 | -t<br/>--type   | Module type. If left blank, Omnispray will attempt to autodetect the module type based on the module name. {enum, spray} |
 | --url  | Target URL. This is for modules that don't use a standard URL for targeting.                                     |
 | -u<br/>--user   | Single username/email to process.                                                                       |
