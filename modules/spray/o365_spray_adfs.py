@@ -106,11 +106,6 @@ class OmniModule(object):
             if self.args.domain:
                 user = build_email(user, self.args.domain)
 
-            elif not check_email(user):
-                logging.error(f"Invalid user: {user}")
-                self.users.remove(user)
-                return
-
             # Build user:password var for reuse with spacing
             creds = f"{user}:{password}"
 
