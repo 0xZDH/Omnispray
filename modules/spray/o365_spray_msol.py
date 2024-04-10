@@ -92,7 +92,7 @@ class OmniModule(object):
                 https://gist.github.com/byt3bl33d3r/19a48fff8fdc34cc1dd1f1d2807e1b7f '''
 
             # Check if we hit our locked account limit, and stop
-            if self.locked_count >= self.lockout_limit:
+            if self.locked_count >= self.locked_limit:
                 return
 
             # Write the tested user in its original format with the password
