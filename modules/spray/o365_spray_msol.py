@@ -92,7 +92,7 @@ class OmniModule(object):
                 https://gist.github.com/byt3bl33d3r/19a48fff8fdc34cc1dd1f1d2807e1b7f '''
 
             # Check if we hit our locked account limit, and stop
-            if self.locked_count >= self.lockout_limit:
+            if self.locked_count >= self.locked_limit:
                 return
 
             # Write the tested user in its original format with the password
@@ -172,7 +172,7 @@ class OmniModule(object):
                         err_msg = AADSTS_CODES[code][1]
                         msg     = f" [{err}: {err_msg}]"
                         logging.info(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{msg}")
-                        self.userlist.remove(user)
+                        self.users.remove(user)
                         break
 
                 # Only executed if the inner loop did NOT break
