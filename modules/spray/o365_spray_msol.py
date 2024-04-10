@@ -172,7 +172,7 @@ class OmniModule(object):
                         err_msg = AADSTS_CODES[code][1]
                         msg     = f" [{err}: {err_msg}]"
                         logging.info(f"{text_colors.red}[ - ]{text_colors.reset} {user}:{password}{msg}")
-                        self.userlist.remove(user)
+                        self.users.remove(user)
                         break
 
                 # Only executed if the inner loop did NOT break
